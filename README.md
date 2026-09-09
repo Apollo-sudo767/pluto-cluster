@@ -74,3 +74,6 @@ pluto-cluster/
 > There are **no plaintext secrets or secret templates stored in this GitOps repository**.
 > All cluster credentials are encrypted with Age keys in your private secrets flake and synced directly into Kubernetes namespaces on boot by NixOS via `k3s-secrets-sync.service` on the `pluto` control plane.
 
+📖 **For exact instructions on creating, encrypting, and verifying each secret, see the [Secrets Provisioning & Encryption Guide](docs/SECRETS_GUIDE.md).**
+
+

@@ -17,8 +17,16 @@ spec:
       labels:
         app: minecraft
     spec:
-      nodeSelector:
-        node.type: compute
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: node.type
+                    operator: In
+                    values:
+                      - compute
       containers:
         - name: minecraft-server
           image: itzg/minecraft-server:latest

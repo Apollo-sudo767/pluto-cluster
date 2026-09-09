@@ -41,7 +41,7 @@ spec:
                   name: surfshark-vpn-secret
                   key: WIREGUARD_ADDRESSES
             - name: SERVER_COUNTRIES
-              value: "United States"
+              value: "Netherlands"
             - name: FIREWALL_INPUT_PORTS
               value: "8080"
             - name: FIREWALL_OUTBOUND_SUBNETS

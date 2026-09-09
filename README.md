@@ -56,14 +56,17 @@ pluto-cluster/
    ./bootstrap.sh
    ```
 
-3. **Configure Secrets**:
-   Before deploying workloads, populate the required credentials:
-   - `apps/minecraft/secret.yaml`: Set `PLAYIT_SECRET_KEY`.
-   - `infrastructure/cloudflared/secret.yaml`: Set `credentials.json` or `TUNNEL_TOKEN`.
+3. **Configure Secrets via NixOS (Agenix)**:
+   Secrets for workloads in this cluster are **100% managed and encrypted via Nix (Agenix)** in [`solar`](https://github.com/Apollo-sudo767/solar) and [`solar-secrets`](https://github.com/Apollo-sudo767/solar-secrets):
+   - `k3s-token.age` -> Cluster join token for HA control-plane.
+   - `playit-secret.age` -> Injected automatically into the `games` namespace as Kubernetes secret `playit-secret`.
+   - `cloudflared-credentials.age` -> Injected automatically into the `cloudflared` namespace as Kubernetes secret `cloudflared-credentials`.
 
 ---
 
-## 🔒 Secrets & Security Best Practices
+## 🔒 Secrets & Security Architecture
 
-> [!IMPORTANT]
-> The secret manifests in this repository contain placeholder values. For production GitOps, encrypt these manifests using **SOPS** (`sops -e -i secret.yaml`) with age keys or use **Sealed Secrets** / **External Secrets Operator** before pushing to public repositories.
+> [!NOTE]
+> There are **no plaintext secrets or secret templates stored in this GitOps repository**.
+> All cluster credentials are encrypted with Age keys in your private secrets flake and synced directly into Kubernetes namespaces on boot by NixOS via `k3s-secrets-sync.service` on the `pluto` control plane.
+

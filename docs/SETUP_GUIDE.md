@@ -115,6 +115,7 @@ All compute nodes run **stateless root filesystems** using tmpfs rollback on boo
 | **K3s Cluster Token** | `secrets/k3s-token.age` | Secure random string: `openssl rand -hex 32` |
 | **Playit Agent Secret** | `secrets/playit-secret.age` | Plain secret key string obtained from Playit.gg |
 | **Cloudflare Credentials** | `secrets/cloudflared-credentials.age` | Complete credentials JSON from `cloudflared tunnel create` |
+| **Surfshark WireGuard** | `secrets/surfshark-vpn.age` | Key-value env file: `WIREGUARD_PRIVATE_KEY` and `WIREGUARD_ADDRESSES` |
 
 ### 4.2 Creating Node Public Keys (`hosts/`)
 For `agenix-rekey` to encrypt secrets for your cluster machines, extract each machine's Age public key:
@@ -141,7 +142,14 @@ s-edit secrets/playit-secret.age
 # 3. Create Cloudflare Tunnel Credentials:
 s-edit secrets/cloudflared-credentials.age
 
-# 4. Rekey secrets for all cluster nodes:
+# 4. Create Surfshark WireGuard VPN Credentials:
+# (Obtain private key and address from my.surfshark.com -> VPN -> Manual -> WireGuard)
+s-edit secrets/surfshark-vpn.age
+# Content:
+# WIREGUARD_PRIVATE_KEY=your_private_key_here
+# WIREGUARD_ADDRESSES=10.14.0.2/16
+
+# 5. Rekey secrets for all cluster nodes:
 cd ~/src/solar
 s-rekey
 git add rekeyed/
@@ -153,6 +161,7 @@ git push origin main
 On `pluto`, NixOS runs `k3s-secrets-sync.service`. On boot, once the K3s API server is ready, it automatically creates:
 - `games/playit-secret`: With key `PLAYIT_SECRET_KEY`
 - `cloudflared/cloudflared-credentials`: With file `credentials.json`
+- `media/surfshark-vpn-secret`: With keys `WIREGUARD_PRIVATE_KEY` and `WIREGUARD_ADDRESSES`
 
 ---
 
@@ -286,6 +295,10 @@ Web services (Jellyfin and Home Assistant) are exposed securely over HTTPS via C
 | **Paper Minecraft** | `games` | `pluto` (`node.type=compute`) | 8Gi RAM / 4 vCPU | 50Gi (`nfs-client`) | Paper 1.21.1, Aikar JVM flags, Playit sidecar |
 | **Jellyfin** | `media` | `hydra` (`gpu.vendor=intel`) | 4Gi RAM / 2 vCPU | 20Gi Config + Sol Media NFS | Intel QuickSync hardware transcoding (`/dev/dri`) |
 | **Home Assistant** | `home-automation` | Any | 1Gi RAM / 1 vCPU | 10Gi (`nfs-client`) | Host networking, automated device discovery |
+| **qBittorrent + VPN** | `media` | Any | 4Gi RAM / 2 vCPU | 10Gi Config + Sol Media NFS | **Gluetun Surfshark WireGuard VPN** sidecar, automatic kill switch |
+| **Sonarr** | `media` | Any | 1Gi RAM / 1 vCPU | 5Gi Config + Sol Media NFS | Automated TV series management, torrent integration |
+| **Radarr** | `media` | Any | 1Gi RAM / 1 vCPU | 5Gi Config + Sol Media NFS | Automated movie collection management, torrent integration |
+| **Prowlarr** | `media` | Any | 512Mi RAM / 0.5 vCPU | 5Gi Config | Centralized torrent/Usenet indexer manager |
 
 ---
 

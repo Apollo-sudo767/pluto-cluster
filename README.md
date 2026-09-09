@@ -40,7 +40,8 @@ pluto-cluster/
 └── apps/
     ├── minecraft/             # Paper Minecraft server (8GB RAM, Beelink, playit-agent)
     ├── jellyfin/              # Jellyfin media server (QuickSync hardware video transcoding)
-    └── home-assistant/        # Smart home automation server
+    ├── home-assistant/        # Smart home automation server
+    └── arr/                   # Servarr media automation + qBittorrent (Surfshark WireGuard VPN)
 ```
 
 ---
@@ -63,6 +64,7 @@ pluto-cluster/
    - `k3s-token.age` -> Cluster join token for HA control-plane.
    - `playit-secret.age` -> Injected automatically into the `games` namespace as Kubernetes secret `playit-secret`.
    - `cloudflared-credentials.age` -> Injected automatically into the `cloudflared` namespace as Kubernetes secret `cloudflared-credentials`.
+   - `surfshark-vpn.age` -> Injected automatically into the `media` namespace as Kubernetes secret `surfshark-vpn-secret` for Gluetun WireGuard.
 
 ---
 

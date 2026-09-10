@@ -80,25 +80,31 @@ All compute nodes run **stateless root filesystems** using tmpfs rollback on boo
 
 ---
 
-## 3. NixOS & NAS Storage Foundation (Sol)
+## 3. Storage Foundation: Temporary Pluto NFS & Sol NAS Migration
 
-### 3.1 ZFS Storage Configuration on `sol`
-1. Deploy `sol` via the `solar` flake:
+### 3.1 Phase 1 (Current): Temporary NFS on `pluto`
+Until your dedicated ZFS NAS (`sol`) is built, **`pluto` acts as the temporary NFS storage host**:
+- Pluto exports `/persist/k3s-volumes` with `rw,sync,no_root_squash`.
+- Both `styx` and `hydra` mount this share over the network.
+- Game servers (Minecraft, Factorio, TF2) and Home Assistant use this shared storage class (`nfs-client`).
+- High-storage media workloads (`jellyfin`, `arr` suite) remain disabled in `apps/kustomization.yaml` to prevent filling Pluto's NVMe drive.
+
+Verify Pluto's NFS export:
+```bash
+showmount -e pluto
+# Output will display:
+# /persist/k3s-volumes *
+```
+
+### 3.2 Phase 2: Migration to `sol` NAS (When Built)
+Once `sol` is assembled and running with its ZFS `tank` pool:
+1. Copy the game saves and volumes over the network:
    ```bash
-   nh os switch /home/apollo/src/solar -H sol
+   rsync -av /persist/k3s-volumes/ sol:/tank/k3s-volumes/
    ```
-2. Verify the ZFS pool and dataset:
-   ```bash
-   zpool status tank
-   zfs list tank/k3s-volumes
-   ```
-3. Verify NFS service and firewall:
-   ```bash
-   # From pluto or your workstation:
-   showmount -e sol.local
-   # Output must show:
-   # /tank/k3s-volumes (everyone)
-   ```
+2. In `infrastructure/nfs-provisioner/deployment.yaml`, update `NFS_SERVER` to `sol.local` and `NFS_PATH` to `/tank/k3s-volumes`.
+3. In `apps/kustomization.yaml`, uncomment `- jellyfin` and `- arr`.
+4. Push to GitOps (`git push origin main`), and Flux/K3s will automatically migrate and deploy the full media streaming stack!
 
 ---
 

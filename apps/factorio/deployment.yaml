@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: factorio-server
+  namespace: games
+  labels:
+    app: factorio
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: factorio
+  template:
+    metadata:
+      labels:
+        app: factorio
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: node.type
+                    operator: In
+                    values:
+                      - compute
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 30
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 30
+      containers:
+        - name: factorio
+          image: factoriotools/factorio:stable
+          ports:
+            - containerPort: 34197
+              name: factorio
+              protocol: UDP
+          env:
+            - name: UPDATE_MODS_ON_START
+              value: "true"
+            - name: SAVE_NAME
+              value: "pluto_world"
+            - name: GENERATE_NEW_SAVE
+              value: "true"
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "500m"
+            limits:
+              memory: "4Gi"
+              cpu: "2"
+          volumeMounts:
+            - name: data
+              mountPath: /factorio
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: factorio-data

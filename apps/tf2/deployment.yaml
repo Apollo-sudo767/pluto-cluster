@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tf2-server
+  namespace: games
+  labels:
+    app: tf2
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: tf2
+  template:
+    metadata:
+      labels:
+        app: tf2
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: node.type
+                    operator: In
+                    values:
+                      - compute
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 30
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 30
+      containers:
+        - name: tf2
+          image: cm2network/tf2:latest
+          ports:
+            - containerPort: 27015
+              name: game-udp
+              protocol: UDP
+            - containerPort: 27015
+              name: rcon-tcp
+              protocol: TCP
+            - containerPort: 27020
+              name: sourcetv-udp
+              protocol: UDP
+          env:
+            - name: SRCDS_PORT
+              value: "27015"
+            - name: SRCDS_STARTMAP
+              value: "ctf_2fort"
+            - name: SRCDS_MAXPLAYERS
+              value: "24"
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1"
+            limits:
+              memory: "4Gi"
+              cpu: "2"
+          volumeMounts:
+            - name: data
+              mountPath: /home/steam/tf-dedicated
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: tf2-data

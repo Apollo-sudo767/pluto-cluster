@@ -28,11 +28,11 @@ spec:
             - name: PROVISIONER_NAME
               value: k8s-sigs.io/nfs-subdir-external-provisioner
             - name: NFS_SERVER
-              value: "sol.local"
+              value: "pluto"
             - name: NFS_PATH
-              value: "/tank/k3s-volumes"
+              value: "/persist/k3s-volumes"
       volumes:
         - name: nfs-client-root
           nfs:
-            server: "sol.local"
-            path: "/tank/k3s-volumes"
+            server: "pluto"
+            path: "/persist/k3s-volumes"

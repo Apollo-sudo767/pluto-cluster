@@ -2,6 +2,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - minecraft
-  - jellyfin
+  - factorio
+  - tf2
   - home-assistant
-  - arr
+  # Media and heavy streaming workloads disabled until Sol ZFS NAS is built
+  # - jellyfin
+  # - arr

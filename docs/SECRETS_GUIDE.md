@@ -51,29 +51,35 @@ Used by Pluto, Styx, and Hydra to authenticate and join the high-availability et
 
 Used by the Minecraft pod sidecar so friends can connect to your server without port forwarding.
 
-- **Where to get it**: [playit.gg/manage/agents](https://playit.gg/manage/agents)
-- **How to get it (No installation needed)**:
-  1. Log into your account at [playit.gg](https://playit.gg).
-  2. Go directly to **[playit.gg/manage/agents](https://playit.gg/manage/agents)** (or click **Agents** in the dashboard).
-  3. Click **Add Agent** (or "+").
-  4. Select **Docker** (or **Headless**) as the agent type — *do not choose the desktop installer*.
-  5. Name the agent (e.g. `pluto-minecraft`) and click create.
-  6. The website will immediately show your **Agent Secret Key** on screen. Copy this string!
-  7. *(Optional)* Click **Add Tunnel** ➔ Type: **Minecraft Java** ➔ Local Port: `25565`.
-- **Command to encrypt**:
+- **Where to get it**: [playit.gg](https://playit.gg)
+- **Why Playit says "No agents yet"**: Playit does not generate an agent key until an agent instance connects and presents a one-time claim code.
+- **How to get it and encrypt it (Zero installation, runs entirely in `/tmp`)**:
+  
+  **Step 1**: Run this in your terminal to fetch the official static Playit CLI into `/tmp` and print your unique claim link:
   ```bash
-  # 1. Write the key to a temporary file:
-  echo -n "PASTE_YOUR_PLAYIT_SECRET_KEY_HERE" > /tmp/playit.secret
+  curl -sL https://github.com/playit-cloud/playit-agent/releases/download/v1.0.10/playit-cli-linux-amd64 -o /tmp/playit && chmod +x /tmp/playit
+  CODE=$(/tmp/playit claim generate)
+  echo ""
+  echo "👉 OPEN THIS URL IN YOUR BROWSER:"
+  echo "   https://playit.gg/claim/$CODE"
+  echo ""
+  ```
 
-  # 2. Encrypt it:
-  nix shell nixpkgs#age nixpkgs#age-plugin-yubikey -c age \
+  **Step 2**: Open that URL in your browser (while logged into [playit.gg](https://playit.gg)) and click **"Claim agent"**.
+
+  **Step 3**: Once claimed in your browser, run this single command in your terminal to exchange the code for your secret key, encrypt it directly into `solar-secrets`, and clean up `/tmp`:
+  ```bash
+  # Exchange claim code for secret key
+  SECRET_KEY=$(/tmp/playit claim exchange $CODE)
+
+  # Encrypt secret key directly to solar-secrets
+  echo -n "$SECRET_KEY" | nix shell nixpkgs#age nixpkgs#age-plugin-yubikey -c age \
     -R ~/src/solar-secrets/master/apollo_user.pub \
     -R ~/src/solar-secrets/master/yubikey.pub \
-    -o ~/src/solar-secrets/secrets/playit-secret.age \
-    /tmp/playit.secret
+    -o ~/src/solar-secrets/secrets/playit-secret.age
 
-  # 3. Clean up the plaintext file:
-  rm -f /tmp/playit.secret
+  # Clean up temporary binary
+  rm -f /tmp/playit
   ```
 
 ---

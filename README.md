@@ -2,7 +2,7 @@
 
 High-Availability Kubernetes (K3s) GitOps & Workload Repository for the Pluto cluster.
 
-📖 **Looking for full end-to-end deployment instructions? See the [Comprehensive Setup & Operations Guide](docs/SETUP_GUIDE.md).**
+📖 **Documentation**: Explore the **[Documentation Hub](docs/README.md)** • **[Setup & Operations Guide](docs/SETUP_GUIDE.md)** • **[Secrets & Encryption Guide](docs/SECRETS_GUIDE.md)** • **[Solar Fleet Documentation](https://apollo-sudo767.github.io/solar/fleet/pluto-cluster.html)**
 
 ---
 

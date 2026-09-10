@@ -51,12 +51,15 @@ Used by Pluto, Styx, and Hydra to authenticate and join the high-availability et
 
 Used by the Minecraft pod sidecar so friends can connect to your server without port forwarding.
 
-- **Where to get it**: [playit.gg](https://playit.gg)
-- **How to get it**:
+- **Where to get it**: [playit.gg/manage/agents](https://playit.gg/manage/agents)
+- **How to get it (No installation needed)**:
   1. Log into your account at [playit.gg](https://playit.gg).
-  2. In the left sidebar, click **Agents** ➔ **Add Agent**.
-  3. Under that agent's settings, copy the **Agent Secret Key** (a long alphanumeric string).
-  4. Click **Add Tunnel** ➔ Type: **Minecraft Java** ➔ Port: `25565`.
+  2. Go directly to **[playit.gg/manage/agents](https://playit.gg/manage/agents)** (or click **Agents** in the dashboard).
+  3. Click **Add Agent** (or "+").
+  4. Select **Docker** (or **Headless**) as the agent type — *do not choose the desktop installer*.
+  5. Name the agent (e.g. `pluto-minecraft`) and click create.
+  6. The website will immediately show your **Agent Secret Key** on screen. Copy this string!
+  7. *(Optional)* Click **Add Tunnel** ➔ Type: **Minecraft Java** ➔ Local Port: `25565`.
 - **Command to encrypt**:
   ```bash
   # 1. Write the key to a temporary file:

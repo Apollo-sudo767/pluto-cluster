@@ -4,7 +4,7 @@ This guide provides step-by-step instructions for obtaining, creating, and encry
 
 > [!IMPORTANT]
 > **Zero plaintext secrets or secret manifests are stored in the `pluto-cluster` repository.**
-> All credentials are encrypted with Age using [`agenix-rekey`](https://github.com/oddlama/agenix-rekey) in your private [`solar-secrets`](https://github.com/Apollo-sudo767/solar-secrets) repository, and synced automatically into Kubernetes namespaces on boot by NixOS via `k3s-secrets-sync.service`.
+> All credentials are encrypted with Age using [`agenix-rekey`](https://github.com/oddlama/agenix-rekey) in my private [`solar-secrets`](https://github.com/Apollo-sudo767/solar-secrets) repository, and synced automatically into Kubernetes namespaces on boot by NixOS via `k3s-secrets-sync.service`.
 
 ---
 

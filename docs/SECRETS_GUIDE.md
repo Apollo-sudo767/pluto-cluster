@@ -191,11 +191,19 @@ To verify that your secrets are correctly encrypted and readable by your master 
 
 ### Decrypt using your YubiKey:
 ```bash
+# For secrets encrypted to Slot 2 (surfshark-vpn.age, playit-secret.age, k3s-token.age):
 nix shell nixpkgs#age nixpkgs#age-plugin-yubikey -c age \
   -d \
+  -i ~/src/solar-secrets/master/yubikey_slot2.id.pub \
+  ~/src/solar-secrets/secrets/<secret-name>.age
+
+# For legacy secrets encrypted to Slot 4 (e.g. apollo-passwd.age):
+nix shell nixpkgs#age nixpkgs#age-plugin-yubikey -c age \
+  -d \
+  -i ~/src/solar-secrets/master/yubikey.id.pub \
   ~/src/solar-secrets/secrets/<secret-name>.age
 ```
-*(Enter your YubiKey PIN and touch when prompted)*.
+*(Touch your YubiKey when prompted)*.
 
 ### Decrypt using your SSH private key:
 ```bash

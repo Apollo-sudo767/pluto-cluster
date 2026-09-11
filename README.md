@@ -54,27 +54,29 @@ pluto-cluster/
 
 ### Phase 1: Deploy Hydra (Bootstrap Master)
 
-Hydra is the physical machine arriving locally first. It can be installed directly using the interactive installer from the [Solar repository](https://github.com/Apollo-sudo767/solar):
+Hydra is the physical machine arriving locally first. You can install it directly using the **Solar Live Installer USB** (`sudo solar-install`) or manually from a standard **NixOS Minimal Live USB**:
 
-1. **Boot Hydra from a NixOS Minimal Live USB**:
+1. **Boot Hydra from a Live USB** and connect to the network.
+
+2. **Partition and Format via Disko**:
    ```bash
-   # On the Hydra console:
-   sudo systemctl start sshd
-   passwd   # Set temporary password
-   ip a     # Note Hydra's IP address
+   sudo nix run github:nix-community/disko -- --mode zap-create-mount --flake "github:Apollo-sudo767/solar#hydra"
    ```
 
-2. **Run the Automated Installer from your Workstation (`mars`)**:
+3. **Provision Persistent SSH Host Key**:
    ```bash
-   cd ~/src/solar
-   ./install.sh
+   sudo mkdir -p /mnt/persist/etc/ssh
+   sudo ssh-keygen -t ed25519 -f /mnt/persist/etc/ssh/ssh_host_ed25519_key -N "" -C "root@hydra"
+   sudo chmod 600 /mnt/persist/etc/ssh/ssh_host_ed25519_key
+   cat /mnt/persist/etc/ssh/ssh_host_ed25519_key.pub
    ```
-   * **Host selection**: Enter `hydra`
-   * **Target IP**: Enter Hydra's IP
-   * **Build mode**: Choose `1` (Build locally on `mars`)
-   * **Agenix**: Choose `1` (ENABLED)
-   * **Host Key**: Choose `1` (Generate NEW SSH key — script will automatically add `hydra.pub` to `solar-secrets` and rekey via your YubiKey)
-   * The installer will format via Disko, deploy NixOS, copy the host key, and reboot Hydra.
+   *(On your workstation, save this key to `solar-secrets/hosts/hydra.pub`, run `s-rekey`, and push to GitHub).*
+
+4. **Install NixOS Closure & Reboot**:
+   ```bash
+   sudo nixos-install --flake "github:Apollo-sudo767/solar#hydra" --no-root-password
+   sudo reboot
+   ```
 
 3. **Verify Hydra on Boot**:
    ```bash

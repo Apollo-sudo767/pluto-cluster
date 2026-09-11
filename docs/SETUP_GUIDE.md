@@ -186,25 +186,30 @@ On `hydra` and `pluto`, NixOS runs `k3s-secrets-sync.service`. On boot, once the
 ## 5. Cluster Bootstrapping & Quorum Initialization
 
 ### Step 1: Deploy Node 1 (`hydra` - Bootstrap Master)
-Hydra is the first physical box available locally. Install it using the interactive installer from [`solar`](https://github.com/Apollo-sudo767/solar):
+Hydra is the first physical box available locally. You can install it using the **Solar Live Installer USB** (`sudo solar-install`) or manually via Disko from a standard **NixOS Minimal Live USB**:
 
-1. **Boot Hydra from a NixOS Live USB** and start SSH:
+1. **Boot Hydra from a Live USB** and connect to the local network.
+
+2. **Partition and Format via Disko**:
    ```bash
-   sudo systemctl start sshd
-   passwd
-   ip a
+   sudo nix run github:nix-community/disko -- --mode zap-create-mount --flake "github:Apollo-sudo767/solar#hydra"
    ```
-2. **Run the Installer from your Workstation (`mars`)**:
+
+3. **Provision Persistent SSH Host Key**:
    ```bash
-   cd ~/src/solar
-   ./install.sh
+   sudo mkdir -p /mnt/persist/etc/ssh
+   sudo ssh-keygen -t ed25519 -f /mnt/persist/etc/ssh/ssh_host_ed25519_key -N "" -C "root@hydra"
+   sudo chmod 600 /mnt/persist/etc/ssh/ssh_host_ed25519_key
+   cat /mnt/persist/etc/ssh/ssh_host_ed25519_key.pub
    ```
-   * Select host: `hydra`
-   * Enter target IP
-   * Build mode: `1` (Build locally on `mars`)
-   * Agenix: `1` (ENABLED)
-   * Host Key: `1` (Generate NEW SSH key — script will add `hydra.pub` to `solar-secrets` and rekey)
-3. **Verify K3s & Secrets Sync on Hydra**:
+   *(On your workstation, place this public key in `solar-secrets/hosts/hydra.pub`, run `s-rekey`, and push to GitHub).*
+
+4. **Install NixOS Closure & Reboot**:
+   ```bash
+   sudo nixos-install --flake "github:Apollo-sudo767/solar#hydra" --no-root-password
+   sudo reboot
+   ```
+5. **Verify K3s & Secrets Sync on Hydra**:
    Because `clusterInit = true` is enabled on Hydra, it initializes the embedded etcd cluster:
    ```bash
    ssh apollo@<hydra-ip>
@@ -212,7 +217,7 @@ Hydra is the first physical box available locally. Install it using the interact
    sudo kubectl get nodes -o wide
    sudo kubectl get secret -n cloudflared cloudflare-tunnel-credentials
    ```
-4. **Deploy Initial Workloads**:
+6. **Deploy Initial Workloads**:
    ```bash
    git clone https://github.com/Apollo-sudo767/pluto-cluster.git
    cd pluto-cluster

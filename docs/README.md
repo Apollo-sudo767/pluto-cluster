@@ -28,20 +28,21 @@ This directory contains full operational runbooks, architecture diagrams, secret
                  │                         │                         │
                  ▼                         ▼                         ▼
    ┌──────────────────────────┐┌──────────────────────────┐┌──────────────────────────┐
-   │         pluto            ││           styx           ││          hydra           │
-   │   Beelink EQR5 (Ryzen)   ││   ThinkPad T14 Gen 2     ││  ThinkCentre M920q Tiny  │
+   │          hydra           ││           styx           ││          pluto           │
+   │  ThinkCentre M920q Tiny  ││   ThinkPad T14 Gen 2     ││   Beelink EQR5 (Ryzen)   │
    │  Bootstrap Master Node   ││   Control Plane Master   ││   Control Plane Master   │
-   │    node.type=compute     ││      Battery capped      ││     gpu.vendor=intel     │
-   │   Reboot: Sun 03:00      ││    Reboot: Sun 03:30     ││    Reboot: Sun 04:00     │
+   │   clusterInit = true     ││      Battery capped      ││    node.type=compute     │
+   │    gpu.vendor=intel      ││    Reboot: Sun 03:30     ││    Reboot: Sun 03:00     │
+   │    Reboot: Sun 04:00     ││                          ││                          │
    └─────────────┬────────────┘└─────────────┬────────────┘└─────────────┬────────────┘
                  └───────────────────────────┼───────────────────────────┘
                                              │
                                    Embedded etcd Quorum
 ```
 
-- **Quorum**: 3-node embedded etcd control plane across `pluto`, `styx`, and `hydra`.
-- **GitOps**: Synchronized automatically from `main` via Flux CD.
-- **Storage**: Dynamic persistent volumes via `nfs-client` backed by `sol` (or temporary `pluto` NFS).
+- **Quorum**: 3-node embedded etcd control plane across `hydra`, `styx`, and `pluto`.
+- **GitOps**: Synchronized automatically from `main` via Flux CD or `kubectl apply -k .`.
+- **Storage**: Progressive storage starting with `hydra` NFS, transitioning to `pluto` NFS, and finally `sol` ZFS NAS.
 - **Secrets**: 100% encrypted at rest in [`solar-secrets`](https://github.com/Apollo-sudo767/solar-secrets) via Agenix, synced into K3s namespaces on boot.
 
 ---

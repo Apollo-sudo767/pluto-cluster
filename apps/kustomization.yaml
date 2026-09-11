@@ -4,7 +4,7 @@ resources:
   - minecraft
   - factorio
   - tf2
-  # Smart home and media workloads disabled for now
-  # - home-assistant
+  - home-assistant
+  # 🛑 Media streaming & downloading stacks disabled until Sol ZFS NAS is online:
   # - jellyfin
   # - arr

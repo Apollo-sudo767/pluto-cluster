@@ -30,9 +30,9 @@ spec:
             - name: NFS_SERVER
               value: "hydra"
             - name: NFS_PATH
-              value: "/persist/k3s-volumes"
+              value: "/persist/kubernetes/storage"
       volumes:
         - name: nfs-client-root
           nfs:
             server: "hydra"
-            path: "/persist/k3s-volumes"
+            path: "/persist/kubernetes/storage"

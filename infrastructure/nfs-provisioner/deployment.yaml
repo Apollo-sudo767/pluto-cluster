@@ -28,11 +28,11 @@ spec:
             - name: PROVISIONER_NAME
               value: k8s-sigs.io/nfs-subdir-external-provisioner
             - name: NFS_SERVER
-              value: "hydra"
+              value: "pluto"
             - name: NFS_PATH
               value: "/persist/kubernetes/storage"
       volumes:
         - name: nfs-client-root
           nfs:
-            server: "hydra"
+            server: "pluto"
             path: "/persist/kubernetes/storage"

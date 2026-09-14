@@ -10,8 +10,8 @@ data:
     metrics: 0.0.0.0:2000
     no-autoupdate: true
     ingress:
-      - hostname: jellyfin.yourdomain.com
+      - hostname: jellyfin.apollan.cc
         service: http://jellyfin.media.svc.cluster.local:8096
-      - hostname: homeassistant.yourdomain.com
+      - hostname: homeassistant.apollan.cc
         service: http://home-assistant.home-automation.svc.cluster.local:8123
       - service: http_status:404

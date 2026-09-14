@@ -60,8 +60,8 @@ This guide covers the complete deployment lifecycle—from the underlying NixOS 
                     ▼                                            ▼
            [ Playit.gg Anycast ]                     [ Cloudflare Tunnel (`cloudflared`) ]
                     ▲                                            ▲
-          mc.yourdomain.com                          jellyfin.yourdomain.com
-          (SRV Record)                              homeassistant.yourdomain.com
+            mc.apollan.cc                               jellyfin.apollan.cc
+            (SRV Record)                               homeassistant.apollan.cc
 ```
 
 ---
@@ -323,10 +323,10 @@ Minecraft uses Playit.gg to bypass firewalls and CGNAT without port forwarding:
 3. Incoming game packets are delivered over the tunnel to `localhost:25565`.
 
 #### Custom Domain & DNS SRV Records
-To let friends connect using your domain (e.g. `mc.yourdomain.com`) without typing ports:
+To let friends connect using your domain (e.g. `mc.apollan.cc`) without typing ports:
 
 1. In the [Playit Dashboard](https://playit.gg):
-   - Open your agent tunnel ➔ Select **Custom Domains** ➔ Add `mc.yourdomain.com`.
+   - Open your agent tunnel ➔ Select **Custom Domains** ➔ Add `mc.apollan.cc`.
    - Note the assigned tunnel target (e.g. `galaxy-1234.craft.playit.gg`) and port (e.g. `34215`).
 
 2. In your DNS Provider (e.g., **Cloudflare DNS**):
@@ -341,9 +341,9 @@ To let friends connect using your domain (e.g. `mc.yourdomain.com`) without typi
      - **Priority**: `0`
      - **Weight**: `5`
      - **Port**: `34215` (Your assigned Playit port)
-     - **Target**: `mc.yourdomain.com`
+     - **Target**: `mc.apollan.cc`
 
-Friends can now join the server by entering `mc.yourdomain.com` in their Minecraft client!
+Friends can now join the server by entering `mc.apollan.cc` in their Minecraft client!
 
 ---
 
@@ -353,9 +353,9 @@ Web services (Jellyfin and Home Assistant) are exposed securely over HTTPS via C
 1. Edit [`infrastructure/cloudflared/configmap.yaml`](../infrastructure/cloudflared/configmap.yaml):
    ```yaml
    ingress:
-     - hostname: jellyfin.yourdomain.com
+     - hostname: jellyfin.apollan.cc
        service: http://jellyfin.media.svc.cluster.local:8096
-     - hostname: homeassistant.yourdomain.com
+     - hostname: homeassistant.apollan.cc
        service: http://home-assistant.home-automation.svc.cluster.local:8123
      - service: http_status:404
    ```

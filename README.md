@@ -2,7 +2,7 @@
 
 High-Availability Kubernetes (K3s) GitOps & Workload Repository for the Pluto cluster.
 
-📖 **Documentation**: **[Venus ➔ Pluto Transfer Runbook](TRANSFER.md)** • **[Solar Fleet Documentation](https://apollo-sudo767.github.io/solar/fleet/pluto-cluster)** • **[Setup Guide](https://apollo-sudo767.github.io/solar/fleet/pluto-cluster/setup)** • **[Secrets Guide](https://apollo-sudo767.github.io/solar/fleet/pluto-cluster/secrets)** • **[Migration Runbook](https://apollo-sudo767.github.io/solar/fleet/pluto-cluster/migration)**
+📖 **Documentation**: **[Solar Fleet Documentation](https://apollo-sudo767.github.io/solar-docs/fleet/pluto-cluster)** • **[Setup Guide](https://apollo-sudo767.github.io/solar-docs/fleet/pluto-cluster/setup)** • **[Secrets Guide](https://apollo-sudo767.github.io/solar-docs/fleet/pluto-cluster/secrets)** • **[Migration Runbook](https://apollo-sudo767.github.io/solar-docs/fleet/pluto-cluster/migration)** • **[Venus ➔ Pluto Transfer Guide](https://apollo-sudo767.github.io/solar-docs/fleet/pluto-cluster/transfer)**
 
 ---
 
@@ -129,6 +129,6 @@ When you travel to the remote location where `venus` is hosted:
 > There are **no plaintext secrets or secret templates stored in this GitOps repository**.
 > All cluster credentials are encrypted with Age keys in [`solar-secrets`](https://github.com/Apollo-sudo767/solar-secrets) and synced directly into Kubernetes namespaces on boot by NixOS via `k3s-secrets-sync.service` on the control plane.
 
-📖 **For exact instructions on creating, encrypting, and verifying each secret, see the [Secrets Provisioning & Encryption Guide](https://apollo-sudo767.github.io/solar/fleet/pluto-cluster/secrets).**
+📖 **For exact instructions on creating, encrypting, and verifying each secret, see the [Secrets Provisioning & Encryption Guide](https://apollo-sudo767.github.io/solar-docs/fleet/pluto-cluster/secrets).**
 
 

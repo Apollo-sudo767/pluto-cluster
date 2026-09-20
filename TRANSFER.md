@@ -146,16 +146,18 @@ cat /persist/backup/joplin/joplin_backup.sql | kubectl exec -i -n productivity d
 kubectl scale deployment -n productivity joplin-server --replicas=1
 ```
 
-#### 2. Seed Zotero WebDAV Files
+#### 2. Seed Zotero WebDAV Files (Longhorn Volume)
 ```bash
-kubectl scale deployment -n productivity zotero --replicas=0
-ZOTERO_PVC=$(ls -d /persist/kubernetes/storage/productivity-zotero-data-*)
-sudo rsync -avzP /persist/backup/zotero/ ${ZOTERO_PVC}/zotero/
-sudo chmod -R 0777 ${ZOTERO_PVC}/zotero
-kubectl scale deployment -n productivity zotero --replicas=1
+# Ensure zotero pod is running with bound Longhorn volume
+kubectl wait --for=condition=ready pod -l app=zotero -n productivity --timeout=120s
+ZOTERO_POD=$(kubectl get pod -n productivity -l app=zotero -o jsonpath='{.items[0].metadata.name}')
+
+# Copy backed up files directly into the Longhorn-backed mount
+kubectl cp /persist/backup/zotero/. productivity/${ZOTERO_POD}:/data/zotero/
+kubectl exec -n productivity ${ZOTERO_POD} -- chmod -R 0777 /data/zotero
 ```
 
-#### 3. Seed Factorio Saves
+#### 3. Seed Factorio Saves (NFS Volume)
 ```bash
 kubectl scale deployment -n games factorio-server --replicas=0
 FACTORIO_PVC=$(ls -d /persist/kubernetes/storage/games-factorio-data-*)
@@ -168,10 +170,11 @@ sudo chown -R 845:845 ${FACTORIO_PVC}
 kubectl scale deployment -n games factorio-server --replicas=1
 ```
 
-#### 4. Seed Minecraft World Data
+#### 4. Seed Minecraft World Data (Local-Path NVMe Volume)
 ```bash
 kubectl scale deployment -n games minecraft --replicas=0
-MC_PVC=$(ls -d /persist/kubernetes/storage/games-minecraft-data-*)
+# Local-path provisioner creates volumes under /persist/kubernetes/local-storage
+MC_PVC=$(ls -d /persist/kubernetes/local-storage/pvc-* 2>/dev/null || ls -d /persist/kubernetes/storage/games-minecraft-data-*)
 sudo rsync -avzP /persist/backup/minecraft/ ${MC_PVC}/
 # Fix ownership for itzg container user (UID 1000)
 sudo chown -R 1000:1000 ${MC_PVC}

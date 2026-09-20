@@ -5,6 +5,8 @@ resources:
   - factorio
   - tf2
   - home-assistant
+  - joplin
+  - zotero
   # 🛑 Media streaming & downloading stacks disabled until Sol ZFS NAS is online:
   # - jellyfin
   # - arr

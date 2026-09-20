@@ -2,7 +2,7 @@
 
 High-Availability Kubernetes (K3s) GitOps & Workload Repository for the Pluto cluster.
 
-📖 **Documentation**: Explore the **[Documentation Hub](docs/README.md)** • **[Setup & Operations Guide](docs/SETUP_GUIDE.md)** • **[Secrets & Encryption Guide](docs/SECRETS_GUIDE.md)** • **[Solar Fleet Documentation](https://apollo-sudo767.github.io/solar/fleet/pluto-cluster.html)**
+📖 **Documentation**: **[Venus ➔ Pluto Transfer Runbook](TRANSFER.md)** • **[Solar Fleet Documentation](https://apollo-sudo767.github.io/solar/fleet/pluto-cluster)** • **[Setup Guide](https://apollo-sudo767.github.io/solar/fleet/pluto-cluster/setup)** • **[Secrets Guide](https://apollo-sudo767.github.io/solar/fleet/pluto-cluster/secrets)** • **[Migration Runbook](https://apollo-sudo767.github.io/solar/fleet/pluto-cluster/migration)**
 
 ---
 
@@ -12,7 +12,7 @@ The Pluto cluster runs a 3-node High-Availability control plane powered by an em
 
 | Node | Namesake | Hardware | Role | K3s Node Label |
 | :--- | :--- | :--- | :--- | :--- |
-| **`hydra`** | Moon of Pluto (Hydra) | Lenovo ThinkCentre M920q Tiny (i5-8500T, 16GB RAM) | Bootstrap Master (`clusterInit = true`) | `gpu.vendor=intel` |
+| **`hydra`** | Moon of Pluto (Hydra) | Lenovo ThinkCentre M920q Tiny (i5-8500T, 24GB RAM) | Bootstrap Master (`clusterInit = true`) | `gpu.vendor=intel` |
 | **`styx`** | Moon of Pluto (Styx) | Lenovo ThinkPad T14 Gen 2 (16GB RAM) | Control-Plane Master (joins `hydra`) | Battery UPS |
 | **`pluto`** | Dwarf Planet Pluto | Beelink EQR5 (Ryzen 7 5825U, 32GB RAM) | Control-Plane Master (joins `hydra`) | `node.type=compute` |
 
@@ -41,8 +41,10 @@ pluto-cluster/
 │   └── cloudflared/           # Cloudflare Tunnel for secure HTTPS web ingress
 └── apps/
     ├── home-assistant/        # Smart home automation server (Active)
+    ├── joplin/                # Joplin note synchronization server & PostgreSQL (Active)
+    ├── zotero/                # Zotero WebDAV attachment sync server & Nginx proxy (Active)
     ├── tf2/                   # Team Fortress 2 dedicated server (Active)
-    ├── minecraft/             # Paper Minecraft server (Active, playit-agent)
+    ├── minecraft/             # Paper / Modpack Minecraft server (Active, playit-agent)
     ├── factorio/              # Factorio multiplayer server (Active)
     ├── jellyfin/              # Jellyfin media server (Disabled until Sol NAS)
     └── arr/                   # Servarr media automation (Disabled until Sol NAS)
@@ -127,6 +129,6 @@ When you travel to the remote location where `venus` is hosted:
 > There are **no plaintext secrets or secret templates stored in this GitOps repository**.
 > All cluster credentials are encrypted with Age keys in [`solar-secrets`](https://github.com/Apollo-sudo767/solar-secrets) and synced directly into Kubernetes namespaces on boot by NixOS via `k3s-secrets-sync.service` on the control plane.
 
-📖 **For exact instructions on creating, encrypting, and verifying each secret, see the [Secrets Provisioning & Encryption Guide](docs/SECRETS_GUIDE.md).**
+📖 **For exact instructions on creating, encrypting, and verifying each secret, see the [Secrets Provisioning & Encryption Guide](https://apollo-sudo767.github.io/solar/fleet/pluto-cluster/secrets).**
 
 

@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: joplin-postgres
+  namespace: productivity
+  labels:
+    app: joplin-postgres
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: joplin-postgres
+  template:
+    metadata:
+      labels:
+        app: joplin-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+              name: postgres
+          env:
+            - name: POSTGRES_DB
+              value: "joplin"
+            - name: POSTGRES_USER
+              value: "joplin"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: joplin-secret
+                  key: POSTGRES_PASSWORD
+            - name: PGDATA
+              value: "/var/lib/postgresql/data/pgdata"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: joplin-postgres-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: joplin-postgres
+  namespace: productivity
+  labels:
+    app: joplin-postgres
+spec:
+  type: ClusterIP
+  selector:
+    app: joplin-postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432

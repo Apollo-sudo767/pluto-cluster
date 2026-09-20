@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: joplin-server
+  namespace: productivity
+  labels:
+    app: joplin
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: joplin
+  template:
+    metadata:
+      labels:
+        app: joplin
+    spec:
+      containers:
+        - name: joplin-server
+          image: joplin/server:3.7.2
+          ports:
+            - containerPort: 22300
+              name: http
+          env:
+            - name: APP_BASE_URL
+              value: "https://joplin.apollan.cc"
+            - name: APP_PORT
+              value: "22300"
+            - name: DB_CLIENT
+              value: "pg"
+            - name: POSTGRES_HOST
+              value: "joplin-postgres"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_DATABASE
+              value: "joplin"
+            - name: POSTGRES_USER
+              value: "joplin"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: joplin-secret
+                  key: POSTGRES_PASSWORD
+          livenessProbe:
+            httpGet:
+              path: /api/ping
+              port: 22300
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /api/ping
+              port: 22300
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"

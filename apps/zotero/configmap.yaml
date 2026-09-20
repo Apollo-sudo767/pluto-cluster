@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zotero-config
+  namespace: productivity
+data:
+  webdav.yaml: |
+    address: 0.0.0.0
+    port: 8081
+    directory: /data/zotero
+    scope: /data/zotero
+    modify: true
+    auth: true
+    cors:
+      enabled: true
+      credentials: true
+      allowed_origins:
+        - "*"
+      allowed_headers:
+        - "*"
+      allowed_methods:
+        - GET
+        - HEAD
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - MKCOL
+        - PROPFIND
+        - PROPPATCH
+        - COPY
+        - MOVE
+        - OPTIONS
+    users:
+      - username: unbalance
+        password: "{bcrypt}$2b$05$vdB4P/hY/tXngTOBHxuzOun7Mm.dOISAy139getu7z5MWUdofMZru"
+        modify: true
+        permissions: "CRUD"
+
+  nginx.conf: |
+    server {
+        listen 80;
+        server_name _;
+
+        client_max_body_size 0;
+
+        location / {
+            # Return 201 Created for WebDAV MKCOL method to satisfy Zotero client directory probes
+            if ($request_method = MKCOL) {
+                return 201;
+            }
+
+            # Strip any /zotero or /zotero/zotero prefix so all requests map to WebDAV root
+            rewrite ^/zotero/zotero/(.*)$ /$1 break;
+            rewrite ^/zotero/zotero/?$ / break;
+            rewrite ^/zotero/(.*)$ /$1 break;
+            rewrite ^/zotero/?$ / break;
+
+            # Ensure redirect Location headers use https
+            proxy_redirect http:// https://;
+
+            # Strip Origin header for WebDAV to prevent "Invalid origin" CORS error
+            proxy_set_header Origin "";
+
+            # Essential WebDAV proxy headers
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto https;
+
+            # Additional WebDAV headers for file movement/properties
+            proxy_set_header Depth $http_depth;
+            proxy_set_header Destination $http_destination;
+            proxy_set_header Overwrite $http_overwrite;
+
+            # Proxy Keep-Alive headers and timeouts
+            proxy_set_header Connection "";
+            proxy_read_timeout 600s;
+            proxy_send_timeout 600s;
+
+            # Disable request/response buffering for WebDAV operations
+            proxy_buffering off;
+            proxy_request_buffering off;
+
+            proxy_pass http://127.0.0.1:8081;
+        }
+    }

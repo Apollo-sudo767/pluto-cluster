@@ -105,21 +105,22 @@ Styx joins `https://hydra:6443` using the synced `k3s-token` and establishes 2-n
 
 ### Phase 3: Transition Venus $\rightarrow$ Pluto & Cut Over Storage
 
-When you travel to the remote location where `venus` is hosted:
-1. Rebuild `venus` as `pluto`:
+Follow the **[Complete Venus ➔ MacBook ➔ ThinkCentre (Hydra) ➔ Pluto Transfer Runbook](./TRANSFER.md)**:
+1. **Stash data on MacBook** and verify workloads in live pods on Hydra.
+2. **Transfer Pluto SSH host key to MacBook**:
    ```bash
-   sudo nixos-rebuild switch --flake "github:Apollo-sudo767/solar#pluto"
+   scp -r ~/.ssh/hosts/pluto apollo@macbook-pro:~/.ssh/hosts/
    ```
-2. Once Pluto joins the cluster, copy existing storage from Hydra to Pluto:
+3. **Boot Beelink hardware into Solar Live USB** and push key from MacBook:
    ```bash
-   sudo rsync -avz /persist/kubernetes/storage/ root@pluto:/persist/kubernetes/storage/
+   scp ~/.ssh/hosts/pluto/ssh_host_ed25519_key* root@<installer-ip>:/mnt/persist/etc/ssh/
    ```
-3. Point `infrastructure/nfs-provisioner/deployment.yaml` to `pluto`:
-   ```yaml
-   - name: NFS_SERVER
-     value: "pluto"
+4. Run `sudo solar-install`, select `pluto`, format NVMe with Disko LUKS + Btrfs, and reboot.
+5. Once Pluto joins the cluster as `node.type=compute`, copy storage from Hydra to Pluto:
+   ```bash
+   sudo rsync -avzP /persist/kubernetes/storage/ root@pluto:/persist/kubernetes/storage/
    ```
-4. Commit and push: `kubectl apply -k .`
+6. Point `infrastructure/nfs-provisioner/deployment.yaml` to `pluto` (`NFS_SERVER: "pluto"`), commit and reconcile.
 
 ---
 

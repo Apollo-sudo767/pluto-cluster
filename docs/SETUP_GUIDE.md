@@ -247,6 +247,7 @@ When ready to install Pluto on the Beelink hardware:
 2. **Stage Pluto SSH Host Key on MacBook**:
    ```bash
    # From Mars:
+   ssh apollo@macbook-pro "mkdir -p ~/.ssh/hosts"
    scp -r ~/.ssh/hosts/pluto apollo@macbook-pro:~/.ssh/hosts/
    # (Or from MacBook):
    mkdir -p ~/.ssh/hosts/pluto && scp -r apollo@mars:~/.ssh/hosts/pluto/ ~/.ssh/hosts/pluto/

@@ -267,6 +267,7 @@ The persistent host key for Pluto is located on `mars` at `~/.ssh/hosts/pluto/`.
 **Option A — Push from Mars to MacBook:**
 ```bash
 # On Mars:
+ssh apollo@macbook-pro "mkdir -p ~/.ssh/hosts"
 scp -r ~/.ssh/hosts/pluto apollo@macbook-pro:~/.ssh/hosts/
 ```
 

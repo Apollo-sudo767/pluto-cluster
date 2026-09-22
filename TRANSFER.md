@@ -13,6 +13,10 @@ This revised procedure uses your **MacBook laptop as the safe harbor stash and d
 3. [Phase 1: Backup & Stash Venus State onto MacBook (Laptop)](#3-phase-1-backup--stash-venus-state-onto-macbook-laptop)
 4. [Phase 2: Transfer Staged Data from MacBook to ThinkCentre (`hydra`)](#4-phase-2-transfer-staged-data-from-macbook-to-thinkcentre-hydra)
 5. [Phase 3: Seed Persistent Volumes & Test Workloads on Hydra (Zero Risk)](#5-phase-3-seed-persistent-volumes--test-workloads-on-hydra-zero-risk)
+   - [Step 5.1: Deploy Manifests via Flux CD](#step-51-deploy-manifests-via-flux-cd)
+   - [Step 5.2: Seed Data into the Bound PVCs](#step-52-seed-data-into-the-bound-pvcs)
+   - [Step 5.3: Manual Workload & Pod Verification Procedures](#step-53-manual-workload--pod-verification-procedures)
+   - [Step 5.4: Automated "All-in-One" Health Check Script](#step-54-automated-all-in-one-health-check-script)
 6. [Phase 4: Stage Pluto SSH Host Key & Clean Install Pluto via Solar Installer](#6-phase-4-stage-pluto-ssh-host-key--clean-install-pluto-via-solar-installer)
    - [Step 4.1: Transfer Pluto SSH Host Key from Mars to MacBook](#step-41-transfer-pluto-ssh-host-key-from-mars-to-macbook)
    - [Step 4.2: Boot Pluto Hardware with Solar Live Installer USB](#step-42-boot-pluto-hardware-with-solar-live-installer-usb)
@@ -235,23 +239,163 @@ sudo chown -R 1000:1000 ${MC_PVC}
 kubectl scale deployment -n games minecraft --replicas=1
 ```
 
-### Step 5.3: Verify All Services in Pods
-Verify services locally before proceeding with hardware modifications:
+### Step 5.3: Manual Workload & Pod Verification Procedures
+
+Verify each workload locally from Hydra or your laptop before proceeding with hardware modifications:
+
+#### 1. Cluster Core & Storage Health
 ```bash
-# Verify Joplin:
-kubectl port-forward -n productivity svc/joplin 22300:22300
-# Open http://localhost:22300 in browser.
+# Verify Hydra node is Ready
+kubectl get nodes -o wide
 
-# Verify Zotero WebDAV:
-kubectl port-forward -n productivity svc/zotero 8081:80
-curl -u unbalance:<password> http://localhost:8081/zotero/
+# Check all pods (all should be Running or Completed)
+kubectl get pods -A -o wide
 
-# Verify Factorio:
-# Connect game client to <hydra-ip>:34197
+# Verify all PVCs are Bound
+kubectl get pvc -A
 
-# Verify Minecraft & Voice sidecar:
-kubectl logs -n games deploy/minecraft -c minecraft-server -f
-kubectl logs -n games deploy/minecraft -c playit-agent -f
+# Check NFS storage exports on Hydra
+showmount -e localhost
+
+# Verify NixOS secrets were synced into K8s
+kubectl get secrets -n productivity joplin-secret
+kubectl get secrets -n games playit-secret
+kubectl get secrets -n cloudflared cloudflared-credentials
+```
+
+#### 2. Joplin (PostgreSQL Database & Web Service)
+```bash
+# Verify database connection and note count
+kubectl logs -n productivity deploy/joplin-postgres --tail=20
+kubectl exec -i -n productivity deploy/joplin-postgres -- psql -U joplin -d joplin -c "\dt"
+kubectl exec -i -n productivity deploy/joplin-postgres -- psql -U joplin -d joplin -c "SELECT count(*) FROM notes;"
+
+# Verify Web UI via port-forward:
+kubectl port-forward -n productivity svc/joplin 22300:22300 --address 0.0.0.0
+# Open http://<hydra-ip>:22300 in browser (or curl -I http://localhost:22300/login)
+```
+
+#### 3. Zotero WebDAV
+```bash
+# Check container logs
+kubectl logs -n productivity deploy/zotero -c webdav --tail=20
+kubectl logs -n productivity deploy/zotero -c nginx --tail=20
+
+# Test WebDAV auth & directory listing:
+kubectl port-forward -n productivity svc/zotero 8081:80 --address 0.0.0.0
+curl -i -u unbalance:<your-password> http://localhost:8081/zotero/
+```
+
+#### 4. Minecraft (Modpack Server & Playit Tunnel)
+```bash
+# Check server boot logs (look for "Done (XX.Xs)!")
+kubectl logs -n games deploy/minecraft -c minecraft-server --tail=50
+
+# Test world and player list via RCON:
+kubectl exec -n games deploy/minecraft -c minecraft-server -- rcon-cli list
+
+# Check Playit.gg tunnel sidecar (look for "Tunnel registered successfully")
+kubectl logs -n games deploy/minecraft -c playit-agent --tail=30
+```
+
+#### 5. Factorio Dedicated Server
+```bash
+# Check server initialization (look for "Factorio initialised" and "Hosting game at port 34197")
+kubectl logs -n games deploy/factorio-server --tail=50
+
+# Connect client to: <hydra-ip>:34197 (UDP)
+```
+
+#### 6. Home Assistant
+```bash
+# Check service logs
+kubectl logs -n home-automation deploy/home-assistant --tail=30
+
+# Test web UI:
+kubectl port-forward -n home-automation svc/home-assistant 8123:8123 --address 0.0.0.0
+# Open http://<hydra-ip>:8123 in browser
+```
+
+---
+
+### Step 5.4: Automated "All-in-One" Health Check Script
+
+You can copy and run this automated smoke test script directly on Hydra (`ssh apollo@hydra`) to validate the entire stack in seconds:
+
+```bash
+cat << 'EOF' > /tmp/check-cluster.sh
+#!/usr/bin/env bash
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+echo "=== 🪐 PLUTO CLUSTER HEALTH CHECK ON HYDRA ==="
+echo ""
+
+# 1. Nodes
+echo -n "Checking K3s Node Status... "
+if kubectl get nodes | grep -q "Ready"; then
+  echo -e "${GREEN}✓ Ready${NC}"
+else
+  echo -e "${RED}✗ Node not ready${NC}"
+fi
+
+# 2. PVCs
+echo -n "Checking PVC Status... "
+PENDING_PVCS=$(kubectl get pvc -A --no-headers 2>/dev/null | grep -v "Bound" | wc -l)
+if [ "$PENDING_PVCS" -eq 0 ]; then
+  echo -e "${GREEN}✓ All PVCs Bound${NC}"
+else
+  echo -e "${RED}✗ $PENDING_PVCS PVCs not bound${NC}"
+fi
+
+# 3. Joplin Web Service
+echo -n "Testing Joplin HTTP Service... "
+if kubectl exec -n productivity deploy/joplin-server -- wget -qO- http://localhost:22300/login >/dev/null 2>&1; then
+  echo -e "${GREEN}✓ Joplin HTTP 200${NC}"
+else
+  echo -e "${RED}✗ Joplin unreachable${NC}"
+fi
+
+# 4. Joplin Postgres Database
+echo -n "Testing Joplin Database... "
+NOTE_COUNT=$(kubectl exec -i -n productivity deploy/joplin-postgres -- psql -U joplin -d joplin -t -c "SELECT count(*) FROM notes;" 2>/dev/null | xargs)
+if [ -n "$NOTE_COUNT" ]; then
+  echo -e "${GREEN}✓ Postgres connected ($NOTE_COUNT notes)${NC}"
+else
+  echo -e "${RED}✗ Postgres query failed${NC}"
+fi
+
+# 5. Minecraft Server & RCON
+echo -n "Testing Minecraft Server (RCON)... "
+if kubectl exec -n games deploy/minecraft -c minecraft-server -- rcon-cli list >/dev/null 2>&1; then
+  echo -e "${GREEN}✓ RCON active & World loaded${NC}"
+else
+  echo -e "${RED}✗ Minecraft RCON not responding${NC}"
+fi
+
+# 6. Factorio Server
+echo -n "Testing Factorio Server Logs... "
+if kubectl logs -n games deploy/factorio-server --tail=100 2>&1 | grep -q "Hosting game at port"; then
+  echo -e "${GREEN}✓ Server hosting on UDP 34197${NC}"
+else
+  echo -e "${RED}✗ Factorio host line not found in logs${NC}"
+fi
+
+# 7. Playit Tunnel Sidecar
+echo -n "Testing Playit Tunnel Sidecar... "
+if kubectl logs -n games deploy/minecraft -c playit-agent --tail=50 2>&1 | grep -qiE "registered|connected"; then
+  echo -e "${GREEN}✓ Tunnel connected${NC}"
+else
+  echo -e "${RED}✗ Playit tunnel not connected${NC}"
+fi
+
+echo ""
+echo "=== HEALTH CHECK FINISHED ==="
+EOF
+
+chmod +x /tmp/check-cluster.sh
+/tmp/check-cluster.sh
 ```
 
 ---

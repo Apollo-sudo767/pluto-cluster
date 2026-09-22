@@ -20,6 +20,7 @@ This guide covers the complete deployment lifecycle—from the underlying NixOS 
 8. [Workloads Reference](#8-workloads-reference)
 9. [Day-2 Operations & Maintenance](#9-day-2-operations--maintenance)
 10. [Troubleshooting Runbook](#10-troubleshooting-runbook)
+11. [Automated Cluster Health Check Script](#11-automated-cluster-health-check-script)
 
 ---
 
@@ -441,3 +442,85 @@ To update application images, environment variables, or resource allocations:
 - **Resolution**:
   - If log says `Invalid secret key`: Check `solar-secrets/secrets/playit-secret.age` and verify the secret was properly applied.
   - If log says `Connected`: Verify that your DNS SRV record port matches the port shown in your Playit tunnel dashboard.
+
+---
+
+## 11. Automated Cluster Health Check Script
+
+Run this smoke test script directly on any master node (`hydra`, `pluto`, or `styx`) to test nodes, PVCs, databases, and game pods in one pass:
+
+```bash
+cat << 'EOF' > /tmp/check-cluster.sh
+#!/usr/bin/env bash
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+echo "=== 🪐 PLUTO CLUSTER HEALTH CHECK ==="
+echo ""
+
+# 1. Nodes
+echo -n "Checking K3s Node Status... "
+if kubectl get nodes | grep -q "Ready"; then
+  echo -e "${GREEN}✓ Ready${NC}"
+else
+  echo -e "${RED}✗ Node not ready${NC}"
+fi
+
+# 2. PVCs
+echo -n "Checking PVC Status... "
+PENDING_PVCS=$(kubectl get pvc -A --no-headers 2>/dev/null | grep -v "Bound" | wc -l)
+if [ "$PENDING_PVCS" -eq 0 ]; then
+  echo -e "${GREEN}✓ All PVCs Bound${NC}"
+else
+  echo -e "${RED}✗ $PENDING_PVCS PVCs not bound${NC}"
+fi
+
+# 3. Joplin Web Service
+echo -n "Testing Joplin HTTP Service... "
+if kubectl exec -n productivity deploy/joplin-server -- wget -qO- http://localhost:22300/login >/dev/null 2>&1; then
+  echo -e "${GREEN}✓ Joplin HTTP 200${NC}"
+else
+  echo -e "${RED}✗ Joplin unreachable${NC}"
+fi
+
+# 4. Joplin Postgres Database
+echo -n "Testing Joplin Database... "
+NOTE_COUNT=$(kubectl exec -i -n productivity deploy/joplin-postgres -- psql -U joplin -d joplin -t -c "SELECT count(*) FROM notes;" 2>/dev/null | xargs)
+if [ -n "$NOTE_COUNT" ]; then
+  echo -e "${GREEN}✓ Postgres connected ($NOTE_COUNT notes)${NC}"
+else
+  echo -e "${RED}✗ Postgres query failed${NC}"
+fi
+
+# 5. Minecraft Server & RCON
+echo -n "Testing Minecraft Server (RCON)... "
+if kubectl exec -n games deploy/minecraft -c minecraft-server -- rcon-cli list >/dev/null 2>&1; then
+  echo -e "${GREEN}✓ RCON active & World loaded${NC}"
+else
+  echo -e "${RED}✗ Minecraft RCON not responding${NC}"
+fi
+
+# 6. Factorio Server
+echo -n "Testing Factorio Server Logs... "
+if kubectl logs -n games deploy/factorio-server --tail=100 2>&1 | grep -q "Hosting game at port"; then
+  echo -e "${GREEN}✓ Server hosting on UDP 34197${NC}"
+else
+  echo -e "${RED}✗ Factorio host line not found in logs${NC}"
+fi
+
+# 7. Playit Tunnel Sidecar
+echo -n "Testing Playit Tunnel Sidecar... "
+if kubectl logs -n games deploy/minecraft -c playit-agent --tail=50 2>&1 | grep -qiE "registered|connected"; then
+  echo -e "${GREEN}✓ Tunnel connected${NC}"
+else
+  echo -e "${RED}✗ Playit tunnel not connected${NC}"
+fi
+
+echo ""
+echo "=== HEALTH CHECK FINISHED ==="
+EOF
+
+chmod +x /tmp/check-cluster.sh
+/tmp/check-cluster.sh
+```

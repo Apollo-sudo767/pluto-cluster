@@ -12,7 +12,7 @@ This directory contains full operational runbooks, architecture diagrams, secret
 | :--- | :--- | :--- |
 | **[Setup & Operations Guide](SETUP_GUIDE.md)** | End-to-end deployment, bootstrapping, and administration manual | Architecture, hardware specs, Sol NAS storage, cluster init, Flux CD GitOps, ingress, maintenance, and runbooks |
 | **[Secrets & Encryption Guide](SECRETS_GUIDE.md)** | Security architecture and zero-plaintext secrets guide | Agenix rekeying, YubiKey decryption, NixOS `k3s-secrets-sync.service`, Kubernetes Secrets injection |
-| **[Fleet Documentation](https://apollo-sudo767.github.io/solar/fleet/pluto-cluster.html)** | Upstream Solar documentation for the Pluto constellation | Node hardware specs, ephemeral root filesystems, Disko layout, and central fleet integration |
+| **[Fleet Documentation](https://apollo-sudo767.github.io/solar-docs/fleet/pluto-cluster)** | Upstream Solar documentation for the Pluto constellation | Node hardware specs, ephemeral root filesystems, Disko layout, and central fleet integration |
 
 ---
 
@@ -77,4 +77,4 @@ This directory contains full operational runbooks, architecture diagrams, secret
 
 - **Main GitOps Repository**: [Apollo-sudo767/pluto-cluster](https://github.com/Apollo-sudo767/pluto-cluster)
 - **Solar Fleet Flake**: [Apollo-sudo767/solar](https://github.com/Apollo-sudo767/solar)
-- **Solar Online Documentation**: [Solar Documentation Book](https://apollo-sudo767.github.io/solar/)
+- **Solar Online Documentation**: [Solar Documentation Book](https://apollo-sudo767.github.io/solar-docs/)

@@ -1,0 +1,167 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tf2-config
+  namespace: games
+  labels:
+    app: tf2
+data:
+  server.cfg: |
+    // ==========================================
+    // Pluto TF2 Server Configuration
+    // Location: St. Louis, MO
+    // ==========================================
+
+    hostname "Pluto | Casual Pub & Comp 6s [St. Louis, MO]"
+    sv_region 0           // US East / Central
+    sv_lan 0              // Public Internet server
+    sv_pure 1             // Consistency enforcement
+
+    // --- Fast 66-Tick Network Settings ---
+    sv_maxrate 0
+    sv_minrate 80000
+    sv_maxupdaterate 66
+    sv_minupdaterate 66
+    sv_maxcmdrate 66
+    sv_mincmdrate 66
+    net_splitpacket_maxrate 1048576
+    sv_parallel_sends 1
+
+    // --- Client / Server Sync ---
+    sv_client_min_interp_ratio 1
+    sv_client_max_interp_ratio 2
+
+    // --- In-Game Voting Support ---
+    sv_allow_votes 1
+    sv_vote_issue_changelevel_allowed 1
+    sv_vote_issue_restart_game_allowed 1
+    sv_vote_issue_scramble_teams_allowed 1
+    sv_vote_issue_nextlevel_allowed 1
+    sv_vote_issue_kick_allowed 1
+    sv_vote_failure_timer 30
+
+    // --- SourceTV Setup ---
+    tv_enable 1
+    tv_name "Pluto SourceTV"
+    tv_port 27020
+    tv_delay 90
+    tv_maxclients 10
+    tv_autorecord 0
+
+    // --- Mode Aliases ---
+    alias comp "exec comp_6s.cfg"
+    alias 6s "exec comp_6s.cfg"
+    alias casual "exec casual.cfg"
+    alias pub "exec casual.cfg"
+
+    // Load Default Casual Pub Mode on startup
+    exec casual.cfg
+
+  casual.cfg: |
+    // ==========================================
+    // Mode: Public Casual Community Pub
+    // ==========================================
+    say "[Pluto] Switching to Public Casual Pub mode..."
+
+    // Disable tournament mode
+    mp_tournament 0
+    mp_tournament_stopwatch 0
+
+    // Dynamic Bot Fill (Auto-populates server when player count < 12)
+    tf_bot_quota 12
+    tf_bot_quota_mode fill
+    tf_bot_difficulty 2
+    tf_bot_join_after_player 1
+    tf_bot_keep_class_after_death 0
+
+    // Casual Gameplay Mechanics
+    tf_weapon_criticals 1
+    tf_use_fixed_weaponspreads 0
+    tf_damage_disablespread 0
+    mp_respawnwavetime 6.0
+    mp_disable_respawn_times 0
+    mp_timelimit 30
+    mp_maxrounds 3
+    mp_winlimit 0
+    mp_windifference 0
+
+    // Unrestricted class limits (-1 = no limit)
+    tf_tournament_classlimit_scout -1
+    tf_tournament_classlimit_soldier -1
+    tf_tournament_classlimit_pyro -1
+    tf_tournament_classlimit_demoman -1
+    tf_tournament_classlimit_heavy -1
+    tf_tournament_classlimit_engineer -1
+    tf_tournament_classlimit_medic -1
+    tf_tournament_classlimit_sniper -1
+    tf_tournament_classlimit_spy -1
+
+    // Map cycle
+    mapcyclefile "mapcycle.txt"
+    tv_autorecord 0
+
+    say "[Pluto] Casual Pub mode active! Bot fill enabled. Have fun!"
+
+  comp_6s.cfg: |
+    // ==========================================
+    // Mode: Official Competitive 6v6 Match
+    // ==========================================
+    say "[Pluto] ATTENTION: COMPETITIVE 6v6 TOURNAMENT MODE ACTIVATED!"
+
+    // Tournament & Match Setup
+    mp_tournament 1
+    mp_tournament_stopwatch 1
+    mp_tournament_restart 1
+
+    // Remove bots for real competitive match
+    tf_bot_quota 0
+
+    // Enforce 6s Class Limits
+    // (Standard 6s: 2 Scout, 2 Soldier, 1 Demo, 1 Medic, 1 Off-class)
+    tf_tournament_classlimit_scout 2
+    tf_tournament_classlimit_soldier 2
+    tf_tournament_classlimit_demoman 1
+    tf_tournament_classlimit_medic 1
+    tf_tournament_classlimit_heavy 1
+    tf_tournament_classlimit_sniper 1
+    tf_tournament_classlimit_pyro 1
+    tf_tournament_classlimit_engineer 1
+    tf_tournament_classlimit_spy 1
+
+    // Competitive Mechanics (No random crits, fixed bullet spreads)
+    tf_weapon_criticals 0
+    tf_use_fixed_weaponspreads 1
+    tf_damage_disablespread 1
+
+    // Match Win Conditions (5CP standard: first to 5 or +5 differential)
+    mp_winlimit 5
+    mp_windifference 2
+    mp_maxrounds 0
+    mp_timelimit 30
+
+    // SourceTV Match Recording
+    tv_autorecord 1
+
+    // Competitive Map Rotation
+    mapcyclefile "mapcycle_6s.txt"
+
+    say "[Pluto] 6v6 Rules Active: Class limits locked. Press F4 to Ready Up!"
+
+  mapcycle.txt: |
+    pl_badwater
+    pl_upward
+    cp_process_final
+    koth_harvest_final
+    cp_snakewater_final1
+    pl_borneo
+    koth_king
+    cp_gullywash_final1
+    ctf_2fort
+
+  mapcycle_6s.txt: |
+    cp_process_final
+    cp_snakewater_final1
+    cp_badlands
+    cp_sunshine
+    koth_product_final
+    cp_gullywash_final1

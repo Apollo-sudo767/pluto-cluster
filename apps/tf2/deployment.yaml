@@ -36,6 +36,21 @@ spec:
           operator: "Exists"
           effect: "NoExecute"
           tolerationSeconds: 30
+      initContainers:
+        - name: init-config
+          image: busybox:latest
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /home/steam/tf-dedicated/tf/cfg
+              cp -fv /etc/tf2-configs/* /home/steam/tf-dedicated/tf/cfg/
+              chown -R 1000:1000 /home/steam/tf-dedicated/tf/cfg
+          volumeMounts:
+            - name: data
+              mountPath: /home/steam/tf-dedicated
+            - name: configs
+              mountPath: /etc/tf2-configs
       containers:
         - name: tf2
           image: cm2network/tf2:latest
@@ -53,9 +68,25 @@ spec:
             - name: SRCDS_PORT
               value: "27015"
             - name: SRCDS_STARTMAP
-              value: "ctf_2fort"
+              value: "pl_badwater"
             - name: SRCDS_MAXPLAYERS
               value: "24"
+            - name: SRCDS_REGION
+              value: "0"
+            - name: SRCDS_HOSTNAME
+              value: "Pluto | Casual Pub & Comp 6s [St. Louis, MO]"
+            - name: SRCDS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: tf2-secret
+                  key: SRCDS_TOKEN
+                  optional: true
+            - name: SRCDS_RCONPW
+              valueFrom:
+                secretKeyRef:
+                  name: tf2-secret
+                  key: SRCDS_RCONPW
+                  optional: true
           resources:
             requests:
               memory: "2Gi"
@@ -70,3 +101,6 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: tf2-data
+        - name: configs
+          configMap:
+            name: tf2-config

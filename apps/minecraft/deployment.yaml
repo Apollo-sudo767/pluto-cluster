@@ -38,7 +38,7 @@ spec:
           tolerationSeconds: 30
       containers:
         - name: minecraft-server
-          image: itzg/minecraft-server:java21
+          image: itzg/minecraft-server:latest
           ports:
             - containerPort: 25565
               name: minecraft

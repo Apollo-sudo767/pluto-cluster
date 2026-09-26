@@ -22,10 +22,11 @@ spec:
           image: joplin/server:3.7.2
           ports:
             - containerPort: 22300
+              hostPort: 22300
               name: http
           env:
             - name: APP_BASE_URL
-              value: "https://joplin.apollan.cc"
+              value: "http://192.168.68.102:22300"
             - name: APP_PORT
               value: "22300"
             - name: DB_CLIENT
@@ -49,7 +50,7 @@ spec:
               port: 22300
               httpHeaders:
                 - name: Host
-                  value: joplin.apollan.cc
+                  value: 192.168.68.102:22300
             initialDelaySeconds: 30
             periodSeconds: 15
           readinessProbe:
@@ -58,7 +59,7 @@ spec:
               port: 22300
               httpHeaders:
                 - name: Host
-                  value: joplin.apollan.cc
+                  value: 192.168.68.102:22300
             initialDelaySeconds: 10
             periodSeconds: 10
           resources:

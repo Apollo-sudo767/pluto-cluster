@@ -43,6 +43,10 @@ spec:
             - containerPort: 25565
               hostPort: 25565
               name: minecraft
+            - containerPort: 24454
+              hostPort: 24454
+              protocol: UDP
+              name: voicechat
           env:
             - name: EULA
               value: "TRUE"

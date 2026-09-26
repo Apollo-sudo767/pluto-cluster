@@ -38,7 +38,7 @@ spec:
           tolerationSeconds: 30
       containers:
         - name: minecraft-server
-          image: itzg/minecraft-server:latest
+          image: itzg/minecraft-server:java21
           ports:
             - containerPort: 25565
               name: minecraft
@@ -57,10 +57,10 @@ spec:
               value: "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch"
           resources:
             requests:
-              memory: "8Gi"
+              memory: "6Gi"
               cpu: "2"
             limits:
-              memory: "8Gi"
+              memory: "12Gi"
               cpu: "4"
           volumeMounts:
             - name: data

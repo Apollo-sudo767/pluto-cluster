@@ -48,7 +48,9 @@ spec:
             - name: VERSION
               value: "1.21.1"
             - name: TYPE
-              value: "PAPER"
+              value: "MODRINTH"
+            - name: MODPACK
+              value: "https://github.com/Phas-MC/NoMansLand/releases/download/1.0.2/PhasMC.s.No.Man.s.Land.mrpack"
             - name: MEMORY
               value: "8G"
             - name: JVM_XX_OPTS

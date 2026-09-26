@@ -20,7 +20,7 @@ spec:
           image: favonia/cloudflare-ddns:1.14.0
           imagePullPolicy: IfNotPresent
           env:
-            - name: CLOUDFLARE_API_TOKEN
+            - name: CF_API_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: cloudflare-ddns-secret

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflare-ddns
+  namespace: infrastructure
+  labels:
+    app.kubernetes.io/name: cloudflare-ddns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cloudflare-ddns
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cloudflare-ddns
+    spec:
+      containers:
+        - name: cloudflare-ddns
+          image: favonia/cloudflare-ddns:1.14.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: CLOUDFLARE_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflare-ddns-secret
+                  key: CLOUDFLARE_API_TOKEN
+            - name: DOMAINS
+              value: "mc.apollan.cc"
+            - name: PROXIED
+              value: "false"
+            - name: UPDATE_CRON
+              value: "@every 5m"
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi

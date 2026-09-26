@@ -47,12 +47,18 @@ spec:
             httpGet:
               path: /api/ping
               port: 22300
+              httpHeaders:
+                - name: Host
+                  value: joplin.apollan.cc
             initialDelaySeconds: 30
             periodSeconds: 15
           readinessProbe:
             httpGet:
               path: /api/ping
               port: 22300
+              httpHeaders:
+                - name: Host
+                  value: joplin.apollan.cc
             initialDelaySeconds: 10
             periodSeconds: 10
           resources:

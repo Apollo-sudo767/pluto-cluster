@@ -45,7 +45,7 @@ spec:
             - |
               mkdir -p /home/steam/tf-dedicated/tf/cfg
               cp -fv /etc/tf2-configs/* /home/steam/tf-dedicated/tf/cfg/
-              chown -R 1000:1000 /home/steam/tf-dedicated/tf/cfg
+              chown -R 1000:1000 /home/steam/tf-dedicated
           volumeMounts:
             - name: data
               mountPath: /home/steam/tf-dedicated

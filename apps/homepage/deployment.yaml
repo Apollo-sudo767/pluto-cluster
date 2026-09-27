@@ -17,6 +17,8 @@ spec:
       labels:
         app: homepage
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: hydra
       serviceAccountName: homepage
       initContainers:
         - name: init-config
@@ -34,6 +36,7 @@ spec:
             runAsUser: 0
           ports:
             - containerPort: 3000
+              hostPort: 3000
               name: http
           env:
             - name: PORT

@@ -20,7 +20,13 @@ data:
           show: true
           cpu: true
           memory: true
-          showNodes: true
+          showLabel: true
+          label: "Cluster"
+        nodes:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
     - search:
         provider: duckduckgo
         target: _blank
@@ -31,9 +37,6 @@ data:
             icon: minecraft.png
             href: "https://mc.apollan.cc"
             description: "1.21.1 Modded (mc.apollan.cc:25565)"
-            widget:
-              type: minecraft
-              url: "udp://10.42.3.3:25565"
         - Factorio (Space Age):
             icon: factorio.png
             description: "2.0 Space Age (mc.apollan.cc:34197)"

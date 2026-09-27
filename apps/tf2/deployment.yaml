@@ -56,12 +56,15 @@ spec:
           image: cm2network/tf2:latest
           ports:
             - containerPort: 27015
+              hostPort: 27015
               name: game-udp
               protocol: UDP
             - containerPort: 27015
+              hostPort: 27015
               name: rcon-tcp
               protocol: TCP
             - containerPort: 27020
+              hostPort: 27020
               name: sourcetv-udp
               protocol: UDP
           env:

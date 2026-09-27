@@ -6,22 +6,19 @@ metadata:
   labels:
     app: tf2
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: tf2
   ports:
     - name: game
       port: 27015
       targetPort: 27015
-      nodePort: 27015
       protocol: UDP
     - name: rcon
       port: 27015
       targetPort: 27015
-      nodePort: 27015
       protocol: TCP
     - name: sourcetv
       port: 27020
       targetPort: 27020
-      nodePort: 27020
       protocol: UDP

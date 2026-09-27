@@ -5,50 +5,78 @@ metadata:
   namespace: dashboard
 data:
   settings.yaml: |
-    title: "Solar Cluster HUD"
+    title: "Solar Fleet HUD"
     favicon: "https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/png/kubernetes.png"
     theme: dark
     color: slate
     headerStyle: clean
+    cardBlur: sm
+    statusStyle: "dot"
+    useEqualHeights: true
+    layout:
+      Game Servers:
+        style: row
+        columns: 3
+      Productivity & Services:
+        style: row
+        columns: 3
+      Fleet Nodes & Infrastructure:
+        style: row
+        columns: 4
 
   kubernetes.yaml: |
     mode: cluster
 
   widgets.yaml: |
+    - greeting:
+        text_size: 2xl
+        text: "Welcome back, Apollo"
+    - datetime:
+        text_size: l
+        format:
+          timeStyle: short
+          dateStyle: medium
+          hourCycle: h12
+    - openmeteo:
+        label: "St. Louis, MO"
+        latitude: 38.6270
+        longitude: -90.1994
+        timezone: "America/Chicago"
+        units: imperial
+    - search:
+        provider: duckduckgo
+        target: _blank
     - kubernetes:
         cluster:
           show: true
           cpu: true
           memory: true
           showLabel: true
-          label: "Cluster"
+          label: "Cluster Quorum"
         nodes:
           show: true
           cpu: true
           memory: true
           showLabel: true
-    - search:
-        provider: duckduckgo
-        target: _blank
 
   services.yaml: |
     - Game Servers:
         - Minecraft (No Man's Land):
             icon: minecraft.png
             href: "https://mc.apollan.cc"
-            description: "1.21.1 Modded (mc.apollan.cc:25565)"
+            description: "1.21.1 Modded • mc.apollan.cc:25565"
         - Factorio (Space Age):
             icon: factorio.png
-            description: "2.0 Space Age (mc.apollan.cc:34197)"
+            description: "2.0 Space Age • mc.apollan.cc:34197"
         - Team Fortress 2:
             icon: team-fortress-2.png
-            description: "Dedicated Server (mc.apollan.cc:27015)"
+            description: "Casual & 6s • mc.apollan.cc:27015"
 
     - Productivity & Services:
         - Joplin Server:
             icon: joplin.png
             href: "https://joplin.apollan.cc"
-            description: "Encrypted Note Sync"
+            description: "Encrypted Note Sync (318 Notes)"
             ping: "https://joplin.apollan.cc"
         - Zotero WebDAV:
             icon: zotero.png
@@ -60,3 +88,54 @@ data:
             href: "https://homeassistant.apollan.cc"
             description: "Smart Home Automation Hub"
             ping: "https://homeassistant.apollan.cc"
+
+    - Fleet Nodes & Infrastructure:
+        - Hydra (Master & NFS):
+            icon: nixos.png
+            description: "Lenovo ThinkCentre M920q • 192.168.69.93"
+        - Pluto (Compute & Games):
+            icon: nixos.png
+            description: "Beelink SER5 5560U • 192.168.69.121"
+        - Styx (Control-Plane):
+            icon: nixos.png
+            description: "HP ProDesk 400 G5 • 192.168.69.74"
+        - Cloudflare Zero Trust:
+            icon: cloudflare.png
+            href: "https://one.dash.cloudflare.com"
+            description: "Edge Tunnel Routing (apollan.cc)"
+            ping: "https://joplin.apollan.cc"
+
+  bookmarks.yaml: |
+    - Fleet Repositories:
+        - Solar (NixOS Fleet):
+            - icon: github.png
+              href: "https://github.com/Apollo-sudo767/solar"
+              abbr: "SLR"
+        - Pluto Cluster (K8s):
+            - icon: github.png
+              href: "https://github.com/Apollo-sudo767/pluto-cluster"
+              abbr: "K8S"
+        - Solar Docs:
+            - icon: github.png
+              href: "https://github.com/Apollo-sudo767/solar-docs"
+              abbr: "DOC"
+    - Management & Cloud:
+        - Tailscale Console:
+            - icon: tailscale.png
+              href: "https://login.tailscale.com/admin"
+              abbr: "TS"
+        - Cloudflare Dashboard:
+            - icon: cloudflare.png
+              href: "https://dash.cloudflare.com"
+              abbr: "CF"
+
+  custom.css: |
+    /* Modern Glassmorphism & Hover Highlights */
+    .card {
+      backdrop-filter: blur(12px) !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .card:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 8px 24px -4px rgba(56, 189, 248, 0.2) !important;
+    }

@@ -18,6 +18,4 @@ data:
         service: http://joplin.productivity.svc.cluster.local:22300
       - hostname: zotero.apollan.cc
         service: http://zotero.productivity.svc.cluster.local:80
-      - hostname: hub.apollan.cc
-        service: http://homepage.dashboard.svc.cluster.local:3000
       - service: http_status:404

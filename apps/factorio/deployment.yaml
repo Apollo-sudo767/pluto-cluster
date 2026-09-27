@@ -48,8 +48,10 @@ spec:
             - name: UPDATE_MODS_ON_START
               value: "true"
             - name: SAVE_NAME
-              value: "pluto_world"
+              value: "space_age_world"
             - name: GENERATE_NEW_SAVE
+              value: "true"
+            - name: DLC_SPACE_AGE
               value: "true"
           resources:
             requests:

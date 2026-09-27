@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homepage-config
+  namespace: dashboard
+data:
+  settings.yaml: |
+    title: "Solar Cluster HUD"
+    favicon: "https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/png/kubernetes.png"
+    theme: dark
+    color: slate
+    headerStyle: clean
+    layout:
+      Cluster Health:
+        style: row
+        columns: 3
+      Game Servers:
+        style: row
+        columns: 3
+      Productivity & Services:
+        style: row
+        columns: 3
+
+  kubernetes.yaml: |
+    mode: cluster
+
+  widgets.yaml: |
+    - kubernetes:
+        cluster:
+          show: true
+          cpu: true
+          memory: true
+          showNodes: true
+    - search:
+        provider: duckduckgo
+        target: _blank
+
+  services.yaml: |
+    - Game Servers:
+        - Minecraft (No Man's Land):
+            icon: minecraft.png
+            href: "https://mc.apollan.cc"
+            description: "1.21.1 Modded - mc.apollan.cc:25565"
+            ping: "192.168.69.121:25565"
+        - Factorio (Space Age):
+            icon: factorio.png
+            description: "2.0 Space Age - mc.apollan.cc:34197"
+            ping: "192.168.69.121:34197"
+        - Team Fortress 2:
+            icon: team-fortress-2.png
+            description: "Dedicated Server - mc.apollan.cc:27015"
+            ping: "192.168.69.121:27015"
+
+    - Productivity & Services:
+        - Joplin Server:
+            icon: joplin.png
+            href: "https://joplin.apollan.cc"
+            description: "Encrypted Note Sync"
+            ping: "https://joplin.apollan.cc"
+        - Zotero WebDAV:
+            icon: zotero.png
+            href: "https://zotero.apollan.cc"
+            description: "Academic Research Library"
+            ping: "https://zotero.apollan.cc"
+        - Home Assistant:
+            icon: home-assistant.png
+            href: "https://homeassistant.apollan.cc"
+            description: "Smart Home Automation Hub"
+            ping: "https://homeassistant.apollan.cc"

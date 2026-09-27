@@ -7,6 +7,7 @@ resources:
   - home-assistant
   - joplin
   - zotero
+  - homepage
   # 🛑 Media streaming & downloading stacks disabled until Sol ZFS NAS is online:
   # - jellyfin
   # - arr

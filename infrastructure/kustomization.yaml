@@ -3,6 +3,6 @@ kind: Kustomization
 resources:
   - nfs-provisioner
   - local-path-provisioner
-  - longhorn
+  # - longhorn (disabled; all storage is currently local-path and nfs-client)
   - cloudflared
   - cloudflare-ddns

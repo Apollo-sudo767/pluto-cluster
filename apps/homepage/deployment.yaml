@@ -21,7 +21,7 @@ spec:
       initContainers:
         - name: init-config
           image: busybox:latest
-          command: ["sh", "-c", "cp -Lv /config-source/* /app/config/ && mkdir -p /app/config/logs"]
+          command: ["sh", "-c", "mkdir -p /app/config/logs && cp -L /config-source/*.yaml /app/config/ && chmod -R 777 /app/config"]
           volumeMounts:
             - name: config-source
               mountPath: /config-source
@@ -30,6 +30,8 @@ spec:
       containers:
         - name: homepage
           image: ghcr.io/gethomepage/homepage:latest
+          securityContext:
+            runAsUser: 0
           ports:
             - containerPort: 3000
               name: http

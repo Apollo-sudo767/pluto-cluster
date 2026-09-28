@@ -61,6 +61,12 @@ spec:
               value: "8G"
             - name: JVM_XX_OPTS
               value: "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch"
+            - name: ENABLE_RCON
+              value: "true"
+            - name: RCON_PASSWORD
+              value: "b962db8175967f602b027465"
+            - name: RCON_PORT
+              value: "25575"
           resources:
             requests:
               memory: "6Gi"
@@ -71,6 +77,41 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
+        - name: backup
+          image: itzg/mc-backup:latest
+          env:
+            - name: RCON_HOST
+              value: "localhost"
+            - name: RCON_PORT
+              value: "25575"
+            - name: RCON_PASSWORD
+              value: "b962db8175967f602b027465"
+            - name: BACKUP_INTERVAL
+              value: "6h"
+            - name: INITIAL_DELAY
+              value: "2m"
+            - name: PRUNE_BACKUPS_DAYS
+              value: "7"
+            - name: PRUNE_BACKUPS_COUNT
+              value: "28"
+            - name: EXCLUDES
+              value: "*.jar,cache,logs,*.tmp,*.sqlite,*.mrpack,backups"
+            - name: TZ
+              value: "America/Chicago"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+              readOnly: true
+            - name: data
+              mountPath: /backups
+              subPath: backups
       volumes:
         - name: data
           persistentVolumeClaim:

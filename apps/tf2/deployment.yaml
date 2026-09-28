@@ -53,7 +53,7 @@ spec:
               mountPath: /etc/tf2-configs
       containers:
         - name: tf2
-          image: cm2network/tf2:latest
+          image: cm2network/tf2:sourcemod
           ports:
             - containerPort: 27015
               hostPort: 27015

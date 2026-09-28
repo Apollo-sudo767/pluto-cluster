@@ -13,6 +13,8 @@ data:
     // ==========================================
 
     hostname "Pluto | Casual Pub & Comp 6s [St. Louis, MO]"
+    sv_password ""        // No join password (open server)
+    sv_tags "pluto,stlouis,casual,6s,comp,vanilla"
     sv_region 0           // US East / Central
     sv_lan 0              // Public Internet server
     sv_pure 1             // Consistency enforcement
@@ -66,6 +68,7 @@ data:
     // Disable tournament mode
     mp_tournament 0
     mp_tournament_stopwatch 0
+    sv_password ""
 
     // Dynamic Bot Fill (Auto-populates server when player count < 12)
     tf_bot_quota 12

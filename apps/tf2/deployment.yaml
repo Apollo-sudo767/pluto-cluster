@@ -78,6 +78,8 @@ spec:
               value: "0"
             - name: SRCDS_HOSTNAME
               value: "Pluto | Casual Pub & Comp 6s [St. Louis, MO]"
+            - name: SRCDS_PW
+              value: ""
             - name: SRCDS_TOKEN
               valueFrom:
                 secretKeyRef:

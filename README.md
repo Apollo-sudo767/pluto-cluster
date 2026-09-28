@@ -38,7 +38,10 @@ pluto-cluster/
 │       └── apps.yaml          # Kustomization for user applications
 ├── infrastructure/
 │   ├── nfs-provisioner/       # Dynamic NFS storage provisioner (nfs-client)
-│   └── cloudflared/           # Cloudflare Tunnel for secure HTTPS web ingress
+│   ├── local-path-provisioner/# Host local path storage provisioner (local-path)
+│   ├── cloudflare-ddns/       # Cloudflare Dynamic DNS updater
+│   ├── cloudflared/           # Cloudflare Tunnel for secure HTTPS web ingress
+│   └── headlamp/              # Read-Only Kubernetes & Server Dashboard (Tailscale)
 └── apps/
     ├── home-assistant/        # Smart home automation server (Active)
     ├── joplin/                # Joplin note synchronization server & PostgreSQL (Active)

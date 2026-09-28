@@ -6,3 +6,4 @@ resources:
   # - longhorn (disabled; all storage is currently local-path and nfs-client)
   - cloudflared
   - cloudflare-ddns
+  - headlamp

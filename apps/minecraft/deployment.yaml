@@ -55,6 +55,8 @@ spec:
               value: "MODRINTH"
             - name: MODRINTH_MODPACK
               value: "https://github.com/Phas-MC/NoMansLand/releases/download/1.0.2/PhasMC.s.No.Man.s.Land.mrpack"
+            - name: MOTD
+              value: "§8» §6No Man's Land §8« §7- §f1.21.1"
             - name: MEMORY
               value: "8G"
             - name: JVM_XX_OPTS

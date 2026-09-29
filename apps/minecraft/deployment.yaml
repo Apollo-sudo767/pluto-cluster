@@ -67,6 +67,8 @@ spec:
               value: "b962db8175967f602b027465"
             - name: RCON_PORT
               value: "25575"
+            - name: ENFORCE_SECURE_PROFILE
+              value: "false"
           resources:
             requests:
               memory: "6Gi"

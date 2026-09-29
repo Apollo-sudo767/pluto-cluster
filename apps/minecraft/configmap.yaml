@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minecraft-backup-script
+  namespace: games
+data:
+  post-backup.sh: |
+    #!/bin/bash
+    set -euo pipefail
+
+    echo "[Backup Pruning] Starting daily thinning retention pass..."
+    TODAY=$(date +%Y%m%d)
+
+    # 1. Clean up backups older than 7 days
+    find /backups -maxdepth 1 -name "world-*.tar.gz" -type f -mtime +7 -delete 2>/dev/null || true
+
+    # 2. For previous days (before today), keep only the latest backup per day
+    PAST_DATES=$(ls /backups/world-*.tar.gz 2>/dev/null | sed -n -E "s/.*world-([0-9]{8})-[0-9]{6}\.tar\.gz/\1/p" | grep -v "$TODAY" | sort -u || true)
+
+    for d in $PAST_DATES; do
+      FILES=$(ls -1 /backups/world-"$d"-*.tar.gz 2>/dev/null | sort || true)
+      COUNT=$(echo "$FILES" | grep -c . || true)
+      if [ "$COUNT" -gt 1 ]; then
+        DELETE_FILES=$(echo "$FILES" | head -n -1)
+        echo "[Backup Pruning] Day $d: Keeping latest backup, pruning older: $DELETE_FILES"
+        rm -f $DELETE_FILES
+      fi
+    done
+
+    echo "[Backup Pruning] Retention pass complete. Active backups:"
+    ls -lh /backups/world-*.tar.gz 2>/dev/null || true

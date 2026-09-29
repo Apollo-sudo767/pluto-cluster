@@ -92,12 +92,12 @@ spec:
               value: "2m"
             - name: PRUNE_BACKUPS_DAYS
               value: "7"
-            - name: PRUNE_BACKUPS_COUNT
-              value: "28"
             - name: EXCLUDES
               value: "*.jar,cache,logs,*.tmp,*.sqlite,*.mrpack,backups"
             - name: TZ
               value: "America/Chicago"
+            - name: POST_BACKUP_SCRIPT_FILE
+              value: "/scripts/post-backup.sh"
           resources:
             requests:
               memory: "256Mi"
@@ -112,7 +112,13 @@ spec:
             - name: data
               mountPath: /backups
               subPath: backups
+            - name: backup-scripts
+              mountPath: /scripts
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: minecraft-data
+        - name: backup-scripts
+          configMap:
+            name: minecraft-backup-script
+            defaultMode: 0755

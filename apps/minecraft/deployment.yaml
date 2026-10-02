@@ -54,7 +54,9 @@ spec:
             - name: TYPE
               value: "MODRINTH"
             - name: MODRINTH_MODPACK
-              value: "https://cdn.modrinth.com/data/QuPh0YK2/versions/qdW92qW2/PhasMC%27s%20No%20Man%27s%20Land.mrpack"
+              value: "phasmcs-no-mans-land"
+            - name: MODRINTH_VERSION
+              value: "1.0.3"
             - name: MODRINTH_FORCE_SYNCHRONIZE
               value: "true"
             - name: MOTD

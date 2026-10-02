@@ -54,7 +54,9 @@ spec:
             - name: TYPE
               value: "MODRINTH"
             - name: MODRINTH_MODPACK
-              value: "https://github.com/Phas-MC/NoMansLand/releases/download/1.0.2/PhasMC.s.No.Man.s.Land.mrpack"
+              value: "https://cdn.modrinth.com/data/QuPh0YK2/versions/qdW92qW2/PhasMC%27s%20No%20Man%27s%20Land.mrpack?mr_download_reason=standalone"
+            - name: MODRINTH_FORCE_SYNCHRONIZE
+              value: "true"
             - name: MOTD
               value: "§8» §6No Man's Land §8« §7- §f1.21.1"
             - name: ICON

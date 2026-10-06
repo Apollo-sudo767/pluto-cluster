@@ -36,6 +36,31 @@ spec:
           operator: "Exists"
           effect: "NoExecute"
           tolerationSeconds: 30
+      initContainers:
+        - name: init-mods
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              MODS_DIR="/home/vintagestory/server-data/Mods"
+              mkdir -p "$MODS_DIR"
+
+              # 1. Vintage Horizons (LOD Shared Terrain Streaming Mod)
+              VH_URL="https://mods.vintagestory.at/download/118969/vintagehorizons_0.3.1.zip"
+              VH_FILE="$MODS_DIR/vintagehorizons_0.3.1.zip"
+              if [ ! -f "$VH_FILE" ]; then
+                echo "Downloading Vintage Horizons LOD mod..."
+                curl -sSL -o "$VH_FILE" "$VH_URL"
+                echo "Vintage Horizons installed successfully."
+              else
+                echo "Vintage Horizons mod already up-to-date."
+              fi
+          volumeMounts:
+            - name: data
+              mountPath: /home/vintagestory/server-data
+              subPath: server-data
       containers:
         - name: vintagestory
           image: indifferentbroccoli/vintage-story-server-docker:latest

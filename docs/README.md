@@ -12,6 +12,7 @@ This directory contains full operational runbooks, architecture diagrams, secret
 | :--- | :--- | :--- |
 | **[Setup & Operations Guide](SETUP_GUIDE.md)** | End-to-end deployment, bootstrapping, and administration manual | Architecture, hardware specs, Sol NAS storage, cluster init, Flux CD GitOps, ingress, maintenance, and runbooks |
 | **[Secrets & Encryption Guide](SECRETS_GUIDE.md)** | Security architecture and zero-plaintext secrets guide | Agenix rekeying, YubiKey decryption, NixOS `k3s-secrets-sync.service`, Kubernetes Secrets injection |
+| **[Kubectl & Operations Guide](KUBECTL_GUIDE.md)** | Complete beginner-to-advanced `kubectl` guide and operations manual | Mental model, workstation kubeconfig setup, syntax grammar, troubleshooting runbook, Helm vs Headlamp, cheat sheet |
 | **[Fleet Documentation](https://apollo-sudo767.github.io/solar-docs/fleet/pluto-cluster)** | Upstream Solar documentation for the Pluto constellation | Node hardware specs, ephemeral root filesystems, Disko layout, and central fleet integration |
 
 ---
@@ -68,6 +69,10 @@ This directory contains full operational runbooks, architecture diagrams, secret
 - [Workloads Reference](SETUP_GUIDE.md#8-workloads-reference)
 
 ### 4. Day-2 Operations
+- [The Complete `kubectl` & Operations Guide](KUBECTL_GUIDE.md)
+- [How to Set Up Cluster Access on Mac](KUBECTL_GUIDE.md#2-setting-up-cluster-access-mac-workstation--nixos)
+- [Debugging Runbook (CrashLoopBackOff, Pending, ImagePull)](KUBECTL_GUIDE.md#5-debugging--troubleshooting-runbook)
+- [Ecosystem: kubectl vs Helm vs Headlamp vs Flux CD](KUBECTL_GUIDE.md#8-the-ecosystem-kubectl-vs-helm-vs-headlamp-vs-flux-cd)
 - [Staggered Automated Maintenance](SETUP_GUIDE.md#9-day-2-operations--maintenance)
 - [Troubleshooting & Quorum Recovery Runbook](SETUP_GUIDE.md#10-troubleshooting-runbook)
 

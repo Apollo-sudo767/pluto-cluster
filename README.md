@@ -2,7 +2,7 @@
 
 High-Availability Kubernetes (K3s) GitOps & Workload Repository for the Pluto cluster.
 
-📖 **Documentation**: **[Solar Fleet Documentation](https://apollo-sudo767.github.io/solar-docs/fleet/pluto-cluster)** • **[Setup Guide](https://apollo-sudo767.github.io/solar-docs/fleet/pluto-cluster/setup)** • **[Secrets Guide](https://apollo-sudo767.github.io/solar-docs/fleet/pluto-cluster/secrets)** • **[Migration Runbook](https://apollo-sudo767.github.io/solar-docs/fleet/pluto-cluster/migration)** • **[Venus ➔ Pluto Transfer Guide](https://apollo-sudo767.github.io/solar-docs/fleet/pluto-cluster/transfer)**
+📖 **Documentation**: **[Solar Fleet Documentation](https://apollo-sudo767.github.io/solar-docs/fleet/pluto-cluster)** • **[Setup Guide](docs/SETUP_GUIDE.md)** • **[Secrets Guide](docs/SECRETS_GUIDE.md)** • **[Kubectl Guide](docs/KUBECTL_GUIDE.md)** • **[Venus ➔ Pluto Transfer Guide](TRANSFER.md)**
 
 ---
 
@@ -46,9 +46,10 @@ pluto-cluster/
     ├── home-assistant/        # Smart home automation server (Active)
     ├── joplin/                # Joplin note synchronization server & PostgreSQL (Active)
     ├── zotero/                # Zotero WebDAV attachment sync server & Nginx proxy (Active)
-    ├── tf2/                   # Team Fortress 2 dedicated server (Active)
+    ├── tf2/                   # Team Fortress 2 dedicated server (Disabled)
     ├── minecraft/             # Paper / Modpack Minecraft server (Active, playit-agent)
     ├── factorio/              # Factorio multiplayer server (Active)
+    ├── vintagestory/          # Vintage Story dedicated server (Active)
     ├── jellyfin/              # Jellyfin media server (Disabled until Sol NAS)
     └── arr/                   # Servarr media automation (Disabled until Sol NAS)
 ```

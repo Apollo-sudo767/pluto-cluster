@@ -3,7 +3,8 @@ kind: Kustomization
 resources:
   - minecraft
   - factorio
-  - tf2
+  # - tf2
+  - vintagestory
   - home-assistant
   - joplin
   - zotero

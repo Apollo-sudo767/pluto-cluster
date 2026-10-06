@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vintagestory-server
+  namespace: games
+  labels:
+    app: vintagestory
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: vintagestory
+  template:
+    metadata:
+      labels:
+        app: vintagestory
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: node.type
+                    operator: In
+                    values:
+                      - compute
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 30
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 30
+      containers:
+        - name: vintagestory
+          image: indifferentbroccoli/vintage-story-server-docker:latest
+          ports:
+            - containerPort: 42420
+              hostPort: 42420
+              name: game-tcp
+              protocol: TCP
+            - containerPort: 42420
+              hostPort: 42420
+              name: game-udp
+              protocol: UDP
+          env:
+            - name: SERVER_NAME
+              value: "Pluto | Vintage Story Server [St. Louis, MO]"
+            - name: SERVER_PASSWORD
+              value: ""
+            - name: UPDATE_ON_START
+              value: "true"
+            - name: MAX_PLAYERS
+              value: "16"
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1"
+            limits:
+              memory: "6Gi"
+              cpu: "3"
+          volumeMounts:
+            - name: data
+              mountPath: /home/vintagestory/server-data
+              subPath: server-data
+            - name: data
+              mountPath: /home/vintagestory/server-files
+              subPath: server-files
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: vintagestory-data

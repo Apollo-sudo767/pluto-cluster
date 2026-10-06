@@ -68,9 +68,12 @@ data:
         - Factorio (Space Age):
             icon: factorio.png
             description: "2.0 Space Age • mc.apollan.cc:34197"
-        - Team Fortress 2:
-            icon: team-fortress-2.png
-            description: "Casual & 6s • mc.apollan.cc:27015"
+        - Vintage Story:
+            icon: vintagestory.png
+            description: "Wilderness Survival • mc.apollan.cc:42420"
+        # - Team Fortress 2:
+        #     icon: team-fortress-2.png
+        #     description: "Casual & 6s • mc.apollan.cc:27015"
 
     - Productivity & Services:
         - Joplin Server:

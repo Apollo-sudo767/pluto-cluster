@@ -52,7 +52,7 @@ spec:
             - name: SERVER_NAME
               value: "Pluto | Vintage Story Server [St. Louis, MO]"
             - name: SERVER_PASSWORD
-              value: ""
+              value: "phasgang"
             - name: UPDATE_ON_START
               value: "true"
             - name: MAX_PLAYERS

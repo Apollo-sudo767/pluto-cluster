@@ -50,15 +50,27 @@ spec:
               MODS_DIR="/home/vintagestory/server-data/Mods"
               mkdir -p "$MODS_DIR"
 
-              # 1. Vintage Horizons (LOD Shared Terrain Streaming Mod)
-              VH_URL="https://mods.vintagestory.at/download/118969/vintagehorizons_0.3.1.zip"
-              VH_FILE="$MODS_DIR/vintagehorizons_0.3.1.zip"
-              if [ ! -f "$VH_FILE" ]; then
-                echo "Downloading Vintage Horizons LOD mod..."
-                curl -sSL -o "$VH_FILE" "$VH_URL"
-                echo "Vintage Horizons installed successfully."
+              # Automated Vintage Horizons update via ModDB API
+              echo "Checking ModDB for Vintage Horizons updates..."
+              API_JSON=$(curl -sSL --max-time 15 "https://mods.vintagestory.at/api/mod/vintagehorizons" || true)
+              FILE_ID=$(echo "$API_JSON" | grep -o "\"fileid\":[0-9]*" | head -n 1 | cut -d: -f2 || true)
+              FILE_NAME=$(echo "$API_JSON" | grep -o "\"filename\":\"[^\"]*\"" | head -n 1 | cut -d\" -f4 || true)
+
+              if [ -n "$FILE_ID" ] && [ -n "$FILE_NAME" ]; then
+                if [ -f "$MODS_DIR/$FILE_NAME" ]; then
+                  echo "Vintage Horizons is already up-to-date ($FILE_NAME)."
+                else
+                  echo "Updating Vintage Horizons to $FILE_NAME..."
+                  rm -f "$MODS_DIR"/vintagehorizons*.zip
+                  curl -sSL -o "$MODS_DIR/$FILE_NAME" "https://mods.vintagestory.at/download/${FILE_ID}/${FILE_NAME}"
+                  echo "Vintage Horizons updated successfully."
+                fi
               else
-                echo "Vintage Horizons mod already up-to-date."
+                echo "Warning: Could not query ModDB API; checking local cache..."
+                if ! ls "$MODS_DIR"/vintagehorizons*.zip >/dev/null 2>&1; then
+                  echo "Falling back to default release v0.3.1..."
+                  curl -sSL -o "$MODS_DIR/vintagehorizons_0.3.1.zip" "https://mods.vintagestory.at/download/118969/vintagehorizons_0.3.1.zip"
+                fi
               fi
           volumeMounts:
             - name: data

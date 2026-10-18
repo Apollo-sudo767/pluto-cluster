@@ -37,7 +37,7 @@ spec:
           tolerationSeconds: 30
       containers:
         - name: minecraft-bta-server
-          image: itzg/minecraft-server:java8
+          image: itzg/minecraft-server:java17
           ports:
             - containerPort: 25565
               hostPort: 25565
@@ -48,11 +48,11 @@ spec:
             - name: TYPE
               value: "CUSTOM"
             - name: CUSTOM_SERVER
-              value: "https://github.com/Better-than-Adventure/bta-download-repo/releases/download/v7.3_04/bta.v7.3_04.server.jar"
+              value: "https://downloads.betterthanadventure.net/bta-server/release/v8.0.1/bta.v8.0.1.server.jar"
             - name: VERSION
-              value: "1.7.3"
+              value: "8.0.1"
             - name: MOTD
-              value: "§8» §2Better Than Adventure! §8« §7- §fBeta 1.7.3 (7.3_04)"
+              value: "§8» §2Better Than Adventure! §8« §7- §fBeta 1.7.3 (8.0.1)"
             - name: MEMORY
               value: "6G"
             - name: JVM_XX_OPTS

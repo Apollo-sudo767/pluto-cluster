@@ -1,0 +1,124 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minecraft-bta
+  namespace: games
+  labels:
+    app: minecraft-bta
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: minecraft-bta
+  template:
+    metadata:
+      labels:
+        app: minecraft-bta
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node.type
+                    operator: In
+                    values:
+                      - compute
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 30
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 30
+      containers:
+        - name: minecraft-bta-server
+          image: itzg/minecraft-server:java8
+          ports:
+            - containerPort: 25565
+              hostPort: 25565
+              name: minecraft
+          env:
+            - name: EULA
+              value: "TRUE"
+            - name: TYPE
+              value: "CUSTOM"
+            - name: CUSTOM_SERVER
+              value: "https://github.com/Better-than-Adventure/bta-download-repo/releases/download/v7.3_04/bta.v7.3_04.server.jar"
+            - name: VERSION
+              value: "1.7.3"
+            - name: MOTD
+              value: "§8» §2Better Than Adventure! §8« §7- §fBeta 1.7.3 (7.3_04)"
+            - name: MEMORY
+              value: "6G"
+            - name: JVM_XX_OPTS
+              value: "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch"
+            - name: ENABLE_RCON
+              value: "true"
+            - name: RCON_PASSWORD
+              value: "b962db8175967f602b027465"
+            - name: RCON_PORT
+              value: "25575"
+            - name: ENFORCE_SECURE_PROFILE
+              value: "false"
+            - name: ONLINE_MODE
+              value: "true"
+          resources:
+            requests:
+              memory: "4Gi"
+              cpu: "2"
+            limits:
+              memory: "8Gi"
+              cpu: "4"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+        - name: backup
+          image: itzg/mc-backup:latest
+          env:
+            - name: RCON_HOST
+              value: "localhost"
+            - name: RCON_PORT
+              value: "25575"
+            - name: RCON_PASSWORD
+              value: "b962db8175967f602b027465"
+            - name: BACKUP_INTERVAL
+              value: "6h"
+            - name: INITIAL_DELAY
+              value: "2m"
+            - name: PRUNE_BACKUPS_DAYS
+              value: "7"
+            - name: EXCLUDES
+              value: "*.jar,cache,logs,*.tmp,*.sqlite,*.mrpack,backups"
+            - name: TZ
+              value: "America/Chicago"
+            - name: POST_BACKUP_SCRIPT_FILE
+              value: "/scripts/post-backup.sh"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+              readOnly: true
+            - name: data
+              mountPath: /backups
+              subPath: backups
+            - name: backup-scripts
+              mountPath: /scripts
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: minecraft-bta-data
+        - name: backup-scripts
+          configMap:
+            name: minecraft-bta-backup-script
+            defaultMode: 0755

@@ -61,10 +61,10 @@ data:
 
   services.yaml: |
     - Game Servers:
-        - Minecraft (No Man's Land):
+        - Minecraft (Better Than Adventure):
             icon: minecraft.png
             href: "https://mc.apollan.cc"
-            description: "1.21.1 Modded • mc.apollan.cc:25565"
+            description: "Beta 1.7.3 (7.3_04) • mc.apollan.cc:25565"
         - Factorio (Space Age):
             icon: factorio.png
             description: "2.0 Space Age • mc.apollan.cc:34197"

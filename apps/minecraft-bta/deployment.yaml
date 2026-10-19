@@ -35,6 +35,10 @@ spec:
           operator: "Exists"
           effect: "NoExecute"
           tolerationSeconds: 30
+      dnsConfig:
+        nameservers:
+          - 1.0.0.1
+          - 9.9.9.9
       containers:
         - name: minecraft-bta-server
           image: itzg/minecraft-server:java17

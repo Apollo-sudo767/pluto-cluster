@@ -15,7 +15,7 @@ data:
     address = ["0.0.0.0"]
     port = 8008
 
-    # Data & media stored on the UniFi UNAS Pro 4 (192.168.11.77:/var/nfs/shared/MatrixActual)
+    # Data & media stored on the UniFi UNAS Pro 4 (192.168.11.76:/var/nfs/shared/MatrixActual)
     database_path = "/var/lib/tuwunel/db"
     database_backup_path = "/var/lib/tuwunel/backups"
     database_backups_to_keep = 3

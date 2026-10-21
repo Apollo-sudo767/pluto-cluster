@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: matrix
+  namespace: productivity
+  labels:
+    app: matrix
+    component: homeserver
+spec:
+  type: ClusterIP
+  selector:
+    app: matrix
+    component: homeserver
+  ports:
+    - name: http
+      port: 8008
+      targetPort: 8008
+      protocol: TCP

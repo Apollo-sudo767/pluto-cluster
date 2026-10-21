@@ -18,4 +18,12 @@ data:
         service: http://joplin.productivity.svc.cluster.local:22300
       - hostname: zotero.apollan.cc
         service: http://zotero.productivity.svc.cluster.local:80
+      - hostname: matrix.apollan.cc
+        service: http://matrix.productivity.svc.cluster.local:8008
+      - hostname: rtc.apollan.cc
+        service: http://matrix-rtc.productivity.svc.cluster.local:8080
+      - hostname: chat.apollan.cc
+        service: http://element-web.productivity.svc.cluster.local:80
+      - hostname: element.apollan.cc
+        service: http://element-web.productivity.svc.cluster.local:80
       - service: http_status:404

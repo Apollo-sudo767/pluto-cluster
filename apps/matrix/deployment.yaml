@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matrix-tuwunel
+  namespace: productivity
+  labels:
+    app: matrix
+    component: homeserver
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: matrix
+      component: homeserver
+  template:
+    metadata:
+      labels:
+        app: matrix
+        component: homeserver
+    spec:
+      # Schedule across any Pluto cluster node (pluto, hydra, or styx), preferring pluto
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: node.type
+                    operator: In
+                    values:
+                      - compute
+      dnsConfig:
+        nameservers:
+          - 1.1.1.1
+          - 9.9.9.9
+      initContainers:
+        - name: init-nas-storage
+          image: alpine:3.20
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              mkdir -p /var/lib/tuwunel/db /var/lib/tuwunel/media /var/lib/tuwunel/backups /var/lib/tuwunel/.secrets
+
+              # Sync from Kubernetes Secret (matrix-secret) if present, otherwise generate persistent secrets on NAS
+              if [ -f /run/k8s-secrets/REGISTRATION_TOKEN ]; then
+                cp /run/k8s-secrets/REGISTRATION_TOKEN /var/lib/tuwunel/.secrets/registration_token
+              elif [ ! -s /var/lib/tuwunel/.secrets/registration_token ]; then
+                head -c 24 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 32 > /var/lib/tuwunel/.secrets/registration_token
+              fi
+
+              if [ -f /run/k8s-secrets/REGISTRATION_SHARED_SECRET ]; then
+                cp /run/k8s-secrets/REGISTRATION_SHARED_SECRET /var/lib/tuwunel/.secrets/registration_shared_secret
+              elif [ ! -s /var/lib/tuwunel/.secrets/registration_shared_secret ]; then
+                head -c 32 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 40 > /var/lib/tuwunel/.secrets/registration_shared_secret
+              fi
+
+              if [ -f /run/k8s-secrets/LIVEKIT_SECRET ]; then
+                cp /run/k8s-secrets/LIVEKIT_SECRET /var/lib/tuwunel/.secrets/livekit_secret
+              elif [ ! -s /var/lib/tuwunel/.secrets/livekit_secret ]; then
+                head -c 32 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 40 > /var/lib/tuwunel/.secrets/livekit_secret
+              fi
+
+              chmod -R 0777 /var/lib/tuwunel/db /var/lib/tuwunel/media /var/lib/tuwunel/backups /var/lib/tuwunel/.secrets || true
+          volumeMounts:
+            - name: matrix-data
+              mountPath: /var/lib/tuwunel
+            - name: k8s-secrets
+              mountPath: /run/k8s-secrets
+              readOnly: true
+      containers:
+        - name: tuwunel
+          image: ghcr.io/matrix-construct/tuwunel:latest
+          env:
+            - name: TUWUNEL_CONFIG
+              value: "/etc/tuwunel/tuwunel.toml"
+          ports:
+            - containerPort: 8008
+              name: http
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /_matrix/client/versions
+              port: 8008
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /_matrix/client/versions
+              port: 8008
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "2"
+              memory: "1536Mi"
+          volumeMounts:
+            - name: matrix-data
+              mountPath: /var/lib/tuwunel
+            - name: config
+              mountPath: /etc/tuwunel/tuwunel.toml
+              subPath: tuwunel.toml
+              readOnly: true
+      volumes:
+        - name: matrix-data
+          persistentVolumeClaim:
+            claimName: matrix-data
+        - name: config
+          configMap:
+            name: matrix-config
+        - name: k8s-secrets
+          secret:
+            secretName: matrix-secret
+            optional: true

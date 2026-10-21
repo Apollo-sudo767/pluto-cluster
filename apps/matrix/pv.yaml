@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: matrix-nas-pv
+  labels:
+    app: matrix
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  mountOptions:
+    - nfsvers=4.1
+    - noatime
+    - hard
+    - timeo=600
+    - retrans=2
+  nfs:
+    # Ubiquiti UniFi UNAS Pro 4 discovered on the home network (192.168.11.0/24)
+    server: "192.168.11.77"
+    # Standard UniFi Drive NFS export path for the Shared Drive named "MatrixActual"
+    path: "/var/nfs/shared/MatrixActual"
+  claimRef:
+    namespace: productivity
+    name: matrix-data

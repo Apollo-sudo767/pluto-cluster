@@ -76,6 +76,11 @@ data:
         #     description: "Casual & 6s • mc.apollan.cc:27015"
 
     - Productivity & Services:
+        - Matrix Chat & Voice:
+            icon: element.png
+            href: "https://chat.apollan.cc"
+            description: "Tuwunel + LiveKit RTC • matrix.apollan.cc"
+            ping: "https://matrix.apollan.cc/_matrix/client/versions"
         - Joplin Server:
             icon: joplin.png
             href: "https://joplin.apollan.cc"
@@ -102,6 +107,10 @@ data:
         - Styx (Control-Plane):
             icon: nixos.png
             description: "HP ProDesk 400 G5 • 192.168.69.74"
+        - UniFi UNAS Pro 4 (NAS):
+            icon: unifi.png
+            href: "https://192.168.11.77"
+            description: "Matrix & Fleet Storage • 192.168.11.77"
         - Cloudflare Zero Trust:
             icon: cloudflare.png
             href: "https://one.dash.cloudflare.com"

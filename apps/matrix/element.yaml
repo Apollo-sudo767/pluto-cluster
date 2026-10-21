@@ -20,19 +20,17 @@ spec:
         app: element-web
         component: client
     spec:
-      # Stateless web client — runs on styx, hydra, or pluto (prefers M920q control-plane nodes to keep compute free)
+      # Stateless web client — pinned to hydra or styx
       affinity:
         nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 50
-              preference:
-                matchExpressions:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
                   - key: kubernetes.io/hostname
                     operator: In
                     values:
-                      - styx
                       - hydra
-                      - pluto
+                      - styx
       containers:
         - name: element-web
           image: vectorim/element-web:latest

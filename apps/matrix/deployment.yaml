@@ -20,17 +20,17 @@ spec:
         app: matrix
         component: homeserver
     spec:
-      # Schedule across any Pluto cluster node (pluto, hydra, or styx), preferring pluto
+      # Strictly pin to hydra and styx (keeping pluto compute dedicated to game servers)
       affinity:
         nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              preference:
-                matchExpressions:
-                  - key: node.type
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
                     operator: In
                     values:
-                      - compute
+                      - hydra
+                      - styx
       dnsConfig:
         nameservers:
           - 1.1.1.1

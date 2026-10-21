@@ -36,6 +36,9 @@ spec:
       containers:
         - name: element-web
           image: vectorim/element-web:latest
+          env:
+            - name: ELEMENT_WEB_PORT
+              value: "80"
           ports:
             - containerPort: 80
               name: http

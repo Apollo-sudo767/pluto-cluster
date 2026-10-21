@@ -114,12 +114,6 @@ spec:
         # 2. Element Call / MatrixRTC JWT Authentication Broker
         - name: lk-jwt-service
           image: ghcr.io/element-hq/lk-jwt-service:latest
-          command:
-            - sh
-            - -c
-            - |
-              export LIVEKIT_SECRET=$(cat /etc/livekit/secret)
-              exec /lk-jwt-service
           env:
             - name: LIVEKIT_JWT_BIND
               value: ":8081"
@@ -127,6 +121,12 @@ spec:
               value: "wss://rtc.apollan.cc"
             - name: LIVEKIT_KEY
               value: "solar-matrix-rtc"
+            - name: LIVEKIT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: matrix-secret
+                  key: LIVEKIT_SECRET
+                  optional: true
             - name: LIVEKIT_FULL_ACCESS_HOMESERVERS
               value: "matrix.apollan.cc"
           ports:

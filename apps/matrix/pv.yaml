@@ -20,8 +20,8 @@ spec:
   nfs:
     # Ubiquiti UniFi UNAS Pro 4 discovered on the home network (192.168.11.0/24)
     server: "192.168.11.77"
-    # Standard UniFi Drive NFS export path for the Shared Drive named "MatrixActual"
-    path: "/var/nfs/shared/MatrixActual"
+    # UniFi Drive NFS export path for MatrixActual
+    path: "/volume/e0020ac1-393d-4b38-97b0-f009b5dfb5f1/.srv/.unifi-drive/MatrixActual/.data"
   claimRef:
     namespace: productivity
     name: matrix-data

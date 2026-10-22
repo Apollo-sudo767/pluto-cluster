@@ -43,6 +43,9 @@ data:
     enable_set_displayname = true
     trusted_servers = ["matrix.org"]
 
+    # Public STUN/TURN fallback for 1:1 WebRTC VoIP
+    turn_uris = ["turn:turn.matrix.org?transport=udp", "turn:turn.matrix.org?transport=tcp"]
+
     # Trust Cloudflare Tunnel proxy headers for accurate client rate-limiting
     ip_source = "cf_connecting_ip"
 
@@ -92,7 +95,7 @@ data:
       },
       "element_call": {
         "url": "https://call.element.io",
-        "use_exclusively": true,
+        "use_exclusively": false,
         "brand": "Solar Call"
       },
       "setting_defaults": {

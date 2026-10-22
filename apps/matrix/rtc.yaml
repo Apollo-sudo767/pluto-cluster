@@ -31,10 +31,6 @@ spec:
                     values:
                       - styx
                       - hydra
-      dnsConfig:
-        nameservers:
-          - 1.1.1.1
-          - 9.9.9.9
       initContainers:
         - name: init-livekit-config
           image: alpine:3.20
@@ -125,6 +121,8 @@ spec:
               value: "/etc/livekit/secret"
             - name: LIVEKIT_FULL_ACCESS_HOMESERVERS
               value: "matrix.apollan.cc"
+            - name: LIVEKIT_CS_API_URL_OVERRIDES
+              value: "matrix.apollan.cc=http://matrix.productivity.svc.cluster.local:8008"
           ports:
             - containerPort: 8081
               name: jwt-http

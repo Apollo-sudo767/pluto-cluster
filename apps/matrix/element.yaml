@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       annotations:
-        rollout: "v5-livekit-hydra"
+        rollout: "v6-openrelay-ui"
       labels:
         app: element-web
         component: client

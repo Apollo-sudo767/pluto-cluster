@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       annotations:
-        rollout: "v2-turn-config"
+        rollout: "v5-openrelay"
       labels:
         app: matrix
         component: homeserver

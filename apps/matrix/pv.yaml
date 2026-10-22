@@ -14,6 +14,10 @@ spec:
   mountOptions:
     - nfsvers=3
     - nolock
+    - proto=tcp
+    - mountproto=tcp
+    - port=2049
+    - mountport=34145
   nfs:
     # Ubiquiti UniFi UNAS Pro 4 discovered on the home network (192.168.11.0/24)
     server: "192.168.11.76"

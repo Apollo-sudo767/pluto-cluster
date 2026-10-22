@@ -26,4 +26,6 @@ data:
         service: http://element-web.productivity.svc.cluster.local:80
       - hostname: element.apollan.cc
         service: http://element-web.productivity.svc.cluster.local:80
+      - hostname: auth.apollan.cc
+        service: http://pocket-id.infrastructure.svc.cluster.local:80
       - service: http_status:404

@@ -7,3 +7,4 @@ resources:
   - cloudflared
   - cloudflare-ddns
   - headlamp
+  - pocket-id

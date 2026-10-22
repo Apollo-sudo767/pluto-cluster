@@ -94,7 +94,7 @@ data:
       },
       "element_call": {
         "url": "https://call.element.io",
-        "use_exclusively": false,
+        "use_exclusively": true,
         "brand": "Solar Call"
       },
       "setting_defaults": {

@@ -16,11 +16,13 @@ spec:
       component: rtc
   template:
     metadata:
+      annotations:
+        rollout: "v4-pin-hydra"
       labels:
         app: matrix-rtc
         component: rtc
     spec:
-      # Strictly pin to hydra and styx (keeping pluto compute dedicated to game servers)
+      # Strictly pin to hydra to align with UniFi port forward IP (192.168.69.93)
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -29,7 +31,6 @@ spec:
                   - key: kubernetes.io/hostname
                     operator: In
                     values:
-                      - styx
                       - hydra
       initContainers:
         - name: init-livekit-config

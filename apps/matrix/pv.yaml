@@ -13,6 +13,7 @@ spec:
   storageClassName: ""
   mountOptions:
     - nfsvers=3
+    - nolock
     - noatime
     - hard
     - timeo=600

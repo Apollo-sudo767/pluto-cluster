@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       annotations:
-        rollout: "v2-native-voip"
+        rollout: "v3-loadbalancer-voip"
       labels:
         app: element-web
         component: client

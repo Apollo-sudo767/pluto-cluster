@@ -181,7 +181,7 @@ metadata:
     app: matrix-rtc
     component: rtc
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: matrix-rtc
     component: rtc

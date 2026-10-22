@@ -20,7 +20,7 @@ spec:
         app: matrix
         component: homeserver
     spec:
-      # Strictly pin to hydra (keeping pluto compute dedicated to game servers)
+      # Strictly pin to hydra and styx (keeping pluto compute dedicated to game servers)
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -29,6 +29,7 @@ spec:
                   - key: kubernetes.io/hostname
                     operator: In
                     values:
+                      - styx
                       - hydra
       dnsConfig:
         nameservers:

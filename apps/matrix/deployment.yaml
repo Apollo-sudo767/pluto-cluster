@@ -16,6 +16,8 @@ spec:
       component: homeserver
   template:
     metadata:
+      annotations:
+        rollout: "v2-turn-config"
       labels:
         app: matrix
         component: homeserver

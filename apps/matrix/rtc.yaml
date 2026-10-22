@@ -20,7 +20,7 @@ spec:
         app: matrix-rtc
         component: rtc
     spec:
-      # Strictly pin to hydra and styx (keeping pluto compute dedicated to game servers)
+      # Strictly pin to hydra (keeping pluto compute dedicated to game servers)
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -30,7 +30,6 @@ spec:
                     operator: In
                     values:
                       - hydra
-                      - styx
       dnsConfig:
         nameservers:
           - 1.1.1.1
@@ -121,12 +120,8 @@ spec:
               value: "wss://rtc.apollan.cc"
             - name: LIVEKIT_KEY
               value: "solar-matrix-rtc"
-            - name: LIVEKIT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: matrix-secret
-                  key: LIVEKIT_SECRET
-                  optional: true
+            - name: LIVEKIT_SECRET_FILE
+              value: "/etc/livekit/secret"
             - name: LIVEKIT_FULL_ACCESS_HOMESERVERS
               value: "matrix.apollan.cc"
           ports:

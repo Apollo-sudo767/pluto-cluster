@@ -17,12 +17,12 @@ spec:
   template:
     metadata:
       annotations:
-        rollout: "v4-pin-hydra"
+        rollout: "v7-servicelb-no-hostport"
       labels:
         app: matrix-rtc
         component: rtc
     spec:
-      # Strictly pin to hydra to align with UniFi port forward IP (192.168.69.93)
+      # Pin to hydra or styx (keeping pluto compute dedicated to game servers)
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -31,6 +31,7 @@ spec:
                   - key: kubernetes.io/hostname
                     operator: In
                     values:
+                      - styx
                       - hydra
       initContainers:
         - name: init-livekit-config
@@ -89,11 +90,9 @@ spec:
               name: signaling
               protocol: TCP
             - containerPort: 7881
-              hostPort: 7881
               name: rtc-tcp
               protocol: TCP
             - containerPort: 7882
-              hostPort: 7882
               name: rtc-udp
               protocol: UDP
           resources:

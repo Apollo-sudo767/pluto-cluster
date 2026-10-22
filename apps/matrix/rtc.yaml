@@ -121,7 +121,7 @@ spec:
               value: "wss://rtc.apollan.cc"
             - name: LIVEKIT_KEY
               value: "solar-matrix-rtc"
-            - name: LIVEKIT_SECRET_FILE
+            - name: LIVEKIT_SECRET_FROM_FILE
               value: "/etc/livekit/secret"
             - name: LIVEKIT_FULL_ACCESS_HOMESERVERS
               value: "matrix.apollan.cc"

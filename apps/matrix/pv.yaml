@@ -12,11 +12,8 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ""
   mountOptions:
-    - nfsvers=4.1
-    - noatime
-    - hard
-    - timeo=600
-    - retrans=2
+    - nfsvers=3
+    - nolock
   nfs:
     # Ubiquiti UniFi UNAS Pro 4 discovered on the home network (192.168.11.0/24)
     server: "192.168.11.76"

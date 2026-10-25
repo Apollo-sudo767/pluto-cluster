@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       annotations:
-        rollout: "v7-target-pluto"
+        rollout: "v8-nfs3-pluto"
       labels:
         app: matrix
         component: homeserver

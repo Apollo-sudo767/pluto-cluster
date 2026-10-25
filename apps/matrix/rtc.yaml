@@ -17,17 +17,18 @@ spec:
   template:
     metadata:
       annotations:
-        rollout: "v7-servicelb-no-hostport"
+        rollout: "v8-nas-nfs4"
       labels:
         app: matrix-rtc
         component: rtc
     spec:
-      # Pin to hydra or styx (keeping pluto compute dedicated to game servers)
+      # Prefer hydra and styx, allowing pluto fallback
       affinity:
         nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
                   - key: kubernetes.io/hostname
                     operator: In
                     values:

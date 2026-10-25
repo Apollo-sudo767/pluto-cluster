@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       annotations:
-        rollout: "v9-auto-failover"
+        rollout: "v10-auto-failover"
       labels:
         app: matrix
         component: homeserver

@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       annotations:
-        rollout: "v11-auto-failover"
+        rollout: "v12-auto-failover"
       labels:
         app: matrix-rtc
         component: rtc

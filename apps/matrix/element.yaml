@@ -7,7 +7,7 @@ metadata:
     app: element-web
     component: client
 spec:
-  replicas: 1
+  replicas: 2
   strategy:
     type: RollingUpdate
   selector:
@@ -17,22 +17,28 @@ spec:
   template:
     metadata:
       annotations:
-        rollout: "v6-openrelay-ui"
+        rollout: "v7-ha-failover"
       labels:
         app: element-web
         component: client
     spec:
-      # Stateless web client — pinned to hydra or styx
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/hostname
-                    operator: In
-                    values:
-                      - hydra
-                      - styx
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 15
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 15
+      # Spread replicas across cluster nodes so at least one instance is always running
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: element-web
       containers:
         - name: element-web
           image: vectorim/element-web:latest

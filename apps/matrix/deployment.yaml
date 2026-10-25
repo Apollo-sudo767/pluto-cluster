@@ -17,21 +17,46 @@ spec:
   template:
     metadata:
       annotations:
-        rollout: "v8-nfs3-pluto"
+        rollout: "v9-auto-failover"
       labels:
         app: matrix
         component: homeserver
     spec:
-      # Schedule on pluto where NFS kernel client is fully operational
+      # Rapid eviction on node failure so the pod reschedules quickly
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 15
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 15
+      # Prefer pluto when healthy, but freely reschedule to styx or hydra if pluto fails
       affinity:
         nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
                   - key: kubernetes.io/hostname
                     operator: In
                     values:
                       - pluto
+            - weight: 80
+              preference:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - styx
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - hydra
       dnsConfig:
         nameservers:
           - 1.1.1.1

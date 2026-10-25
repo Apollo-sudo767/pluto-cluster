@@ -17,23 +17,21 @@ spec:
   template:
     metadata:
       annotations:
-        rollout: "v8-nas-nfs4"
+        rollout: "v9-target-pluto"
       labels:
         app: matrix-rtc
         component: rtc
     spec:
-      # Prefer hydra and styx, allowing pluto fallback
+      # Schedule on pluto where NFS kernel client is fully operational
       affinity:
         nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              preference:
-                matchExpressions:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
                   - key: kubernetes.io/hostname
                     operator: In
                     values:
-                      - styx
-                      - hydra
+                      - pluto
       initContainers:
         - name: init-livekit-config
           image: alpine:3.20

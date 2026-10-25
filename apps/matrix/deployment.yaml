@@ -17,23 +17,21 @@ spec:
   template:
     metadata:
       annotations:
-        rollout: "v6-nas-nfs4"
+        rollout: "v7-target-pluto"
       labels:
         app: matrix
         component: homeserver
     spec:
-      # Prefer hydra and styx, allowing pluto fallback
+      # Schedule on pluto where NFS kernel client is fully operational
       affinity:
         nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              preference:
-                matchExpressions:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
                   - key: kubernetes.io/hostname
                     operator: In
                     values:
-                      - styx
-                      - hydra
+                      - pluto
       dnsConfig:
         nameservers:
           - 1.1.1.1

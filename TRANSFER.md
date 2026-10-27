@@ -202,11 +202,19 @@ kubectl wait --for=condition=ready pod -l app=joplin-postgres -n productivity --
 # Scale down joplin-server during restore
 kubectl scale deployment -n productivity joplin-server --replicas=0
 
-# Stream database dump into postgres pod
-cat /persist/backup/joplin/joplin_backup.sql | kubectl exec -i -n productivity deploy/joplin-postgres -- psql -U joplin -d joplin
+# Clean-slate schema reset (prevents orphan table collisions from newer migrations)
+kubectl exec -i -n productivity deploy/joplin-postgres -- psql -U joplin -d joplin -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO joplin;"
+
+# Stream database dump into postgres pod (stripping unsupported directives)
+sed -E "/restrict|transaction_timeout/d" /persist/backup/joplin/joplin_backup.sql | \
+  kubectl exec -i -n productivity deploy/joplin-postgres -- psql -U joplin -d joplin -q
+
+# Ensure migration lock is cleared
+kubectl exec -i -n productivity deploy/joplin-postgres -- psql -U joplin -d joplin -c "UPDATE knex_migrations_lock SET is_locked = 0;"
 
 # Scale joplin back up
 kubectl scale deployment -n productivity joplin-server --replicas=1
+
 ```
 
 #### 2. Seed Zotero WebDAV Files (Longhorn Volume)

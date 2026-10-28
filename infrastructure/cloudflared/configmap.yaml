@@ -28,4 +28,8 @@ data:
         service: http://element-web.productivity.svc.cluster.local:80
       - hostname: auth.apollan.cc
         service: http://pocket-id.infrastructure.svc.cluster.local:80
+      - hostname: requests.apollan.cc
+        service: http://jellyseerr.media.svc.cluster.local:5055
+      - hostname: jellyseerr.apollan.cc
+        service: http://jellyseerr.media.svc.cluster.local:5055
       - service: http_status:404

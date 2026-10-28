@@ -96,6 +96,11 @@ data:
             href: "https://homeassistant.apollan.cc"
             description: "Smart Home Automation Hub"
             ping: "https://homeassistant.apollan.cc"
+        - Jellyseerr:
+            icon: jellyseerr.png
+            href: "https://requests.apollan.cc"
+            description: "Media Request & Discovery Portal"
+            ping: "http://jellyseerr.media.svc.cluster.local:5055"
 
     - Fleet Nodes & Infrastructure:
         - Hydra (Master & NFS):

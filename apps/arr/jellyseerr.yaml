@@ -26,7 +26,7 @@ spec:
                   - key: kubernetes.io/hostname
                     operator: In
                     values:
-                      - pluto
+                      - hydra
             - weight: 80
               preference:
                 matchExpressions:
@@ -34,13 +34,6 @@ spec:
                     operator: In
                     values:
                       - styx
-            - weight: 50
-              preference:
-                matchExpressions:
-                  - key: kubernetes.io/hostname
-                    operator: In
-                    values:
-                      - hydra
       tolerations:
         - key: "node.kubernetes.io/not-ready"
           operator: "Exists"

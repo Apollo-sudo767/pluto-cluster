@@ -10,16 +10,3 @@ spec:
   resources:
     requests:
       storage: 30Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: jellyfin-media
-  namespace: media
-spec:
-  accessModes:
-    - ReadWriteMany
-  storageClassName: nfs-client
-  resources:
-    requests:
-      storage: 100Gi

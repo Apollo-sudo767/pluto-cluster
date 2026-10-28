@@ -51,7 +51,7 @@ pluto-cluster/
     ├── factorio/              # Factorio multiplayer server (Active)
     ├── vintagestory/          # Vintage Story dedicated server (Active)
     ├── jellyfin/              # Jellyfin media server (Disabled until Sol NAS)
-    └── arr/                   # Servarr media automation (Disabled until Sol NAS)
+    └── arr/                   # Servarr media automation (Active • UNAS Pro 4 MediaStorage)
 ```
 
 ---

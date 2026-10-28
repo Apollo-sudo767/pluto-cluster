@@ -47,7 +47,7 @@ spec:
             claimName: jellyfin-config
         - name: media
           persistentVolumeClaim:
-            claimName: jellyfin-media
+            claimName: media-storage
         - name: dri
           hostPath:
             path: /dev/dri

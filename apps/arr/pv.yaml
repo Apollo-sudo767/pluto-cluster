@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-nas-pv
+  labels:
+    app: media
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  mountOptions:
+    - nfsvers=3
+    - nolock
+    - proto=tcp
+    - mountproto=tcp
+    - mountport=39939
+  nfs:
+    # Ubiquiti UniFi UNAS Pro 4 discovered on the home network (192.168.11.0/24)
+    server: "192.168.11.76"
+    # UniFi Drive NFS export path for MediaStorage
+    path: "/volume/e0020ac1-393d-4b38-97b0-f009b5dfb5f1/.srv/.unifi-drive/MediaStorage/.data"
+  claimRef:
+    namespace: media
+    name: media-storage

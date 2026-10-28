@@ -11,6 +11,6 @@ resources:
   - zotero
   - matrix
   - homepage
-  # 🛑 Media streaming & downloading stacks disabled until Sol ZFS NAS is online:
+  - arr
+  # 🛑 Jellyfin media streaming disabled until Sol ZFS NAS is online:
   # - jellyfin
-  # - arr

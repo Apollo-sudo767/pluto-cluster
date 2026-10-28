@@ -17,6 +17,39 @@ spec:
       labels:
         app: radarr
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - pluto
+            - weight: 80
+              preference:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - styx
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - hydra
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 15
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 15
       containers:
         - name: radarr
           image: lscr.io/linuxserver/radarr:latest
@@ -48,7 +81,7 @@ spec:
             claimName: radarr-config
         - name: media
           persistentVolumeClaim:
-            claimName: jellyfin-media
+            claimName: media-storage
 ---
 apiVersion: v1
 kind: Service

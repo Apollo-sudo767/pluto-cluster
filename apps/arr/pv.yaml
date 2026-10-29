@@ -15,13 +15,12 @@ spec:
     - nfsvers=3
     - nolock
     - proto=tcp
-    - mountproto=tcp
-    - mountport=39791
+    - mountproto=udp
   nfs:
     # Ubiquiti UniFi UNAS Pro 4 discovered on the home network (192.168.11.0/24)
     server: "192.168.11.76"
-    # UniFi Drive NFS export path for MediaStorage
-    path: "/volume/e0020ac1-393d-4b38-97b0-f009b5dfb5f1/.srv/.unifi-drive/MediaStorage/.data"
+    # UniFi Drive NFS export path for MediaStorage on Storage Pool 3
+    path: "/volume/39e5493f-d7db-4c23-953a-e93aca6df38d/.srv/.unifi-drive/MediaStorage/.data"
   claimRef:
     namespace: media
     name: media-storage

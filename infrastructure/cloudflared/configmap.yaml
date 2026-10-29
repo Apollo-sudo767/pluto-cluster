@@ -32,4 +32,14 @@ data:
         service: http://jellyseerr.media.svc.cluster.local:5055
       - hostname: jellyseerr.apollan.cc
         service: http://jellyseerr.media.svc.cluster.local:5055
+      - hostname: prowlarr.apollan.cc
+        service: http://prowlarr.media.svc.cluster.local:9696
+      - hostname: radarr.apollan.cc
+        service: http://radarr.media.svc.cluster.local:7878
+      - hostname: sonarr.apollan.cc
+        service: http://sonarr.media.svc.cluster.local:8989
+      - hostname: torrents.apollan.cc
+        service: http://qbittorrent.media.svc.cluster.local:8080
+      - hostname: qbittorrent.apollan.cc
+        service: http://qbittorrent.media.svc.cluster.local:8080
       - service: http_status:404

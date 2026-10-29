@@ -64,6 +64,10 @@ spec:
               value: "8080"
             - name: FIREWALL_OUTBOUND_SUBNETS
               value: "10.42.0.0/16,10.43.0.0/16,192.168.0.0/16,10.0.0.0/8"
+            - name: DOT
+              value: "off"
+            - name: DNS_PLAINTEXT_ADDRESS
+              value: "1.1.1.1"
           ports:
             - name: http
               containerPort: 8080
@@ -99,6 +103,9 @@ spec:
               mountPath: /config
             - name: media
               mountPath: /media
+            - name: media
+              mountPath: /downloads
+              subPath: downloads
       volumes:
         - name: config
           persistentVolumeClaim:

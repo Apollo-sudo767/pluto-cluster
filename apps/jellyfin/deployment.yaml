@@ -22,10 +22,57 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
               - matchExpressions:
+                  - key: gpu.vendor
+                    operator: In
+                    values:
+                      - intel
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
                   - key: kubernetes.io/hostname
                     operator: In
                     values:
-                      - pluto
+                      - hydra
+            - weight: 80
+              preference:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - styx
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 15
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 15
+      initContainers:
+        - name: restore-config
+          image: busybox:latest
+          command:
+            - sh
+            - -c
+            - |
+              if [ ! -f /config/data/jellyfin.db ]; then
+                echo "Restoring Jellyfin config from seed tarball..."
+                if [ -f /seed/jellyfin-config.tar.gz ]; then
+                  tar -xzf /seed/jellyfin-config.tar.gz -C /config/
+                  echo "Restore completed successfully."
+                else
+                  echo "Seed tarball not found at /seed/jellyfin-config.tar.gz"
+                fi
+              else
+                echo "Jellyfin config already present in volume, skipping restore."
+              fi
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: seed
+              mountPath: /seed
       containers:
         - name: jellyfin
           image: jellyfin/jellyfin:latest
@@ -36,7 +83,7 @@ spec:
             privileged: true
           resources:
             requests:
-              cpu: "1"
+              cpu: "500m"
               memory: 2Gi
             limits:
               cpu: "4"
@@ -51,10 +98,14 @@ spec:
       volumes:
         - name: config
           persistentVolumeClaim:
-            claimName: jellyfin-config
+            claimName: jellyfin-config-v2
         - name: media
           persistentVolumeClaim:
             claimName: media-storage
         - name: dri
           hostPath:
             path: /dev/dri
+        - name: seed
+          hostPath:
+            path: /tmp
+            type: Directory

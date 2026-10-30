@@ -16,6 +16,8 @@ spec:
     metadata:
       labels:
         app: jellyfin
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2026-10-30T15:32:00Z"
     spec:
       affinity:
         nodeAffinity:

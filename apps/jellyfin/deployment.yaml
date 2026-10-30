@@ -6,7 +6,7 @@ metadata:
   labels:
     app: jellyfin
 spec:
-  replicas: 0
+  replicas: 1
   strategy:
     type: Recreate
   selector:
@@ -17,7 +17,7 @@ spec:
       labels:
         app: jellyfin
       annotations:
-        kubectl.kubernetes.io/restartedAt: "2026-10-30T15:32:00Z"
+        kubectl.kubernetes.io/restartedAt: "2026-10-30T16:05:00Z"
     spec:
       affinity:
         nodeAffinity:
@@ -44,17 +44,14 @@ spec:
             - sh
             - -c
             - |
-              if [ ! -f /config/data/jellyfin.db ]; then
+              if [ -f /seed/jellyfin-config.tar.gz ]; then
                 echo "Restoring Jellyfin config from seed tarball..."
-                if [ -f /seed/jellyfin-config.tar.gz ]; then
-                  tar -xzf /seed/jellyfin-config.tar.gz -C /config/
-                  chmod -R 777 /config
-                  echo "Restore completed successfully."
-                else
-                  echo "Seed tarball not found at /seed/jellyfin-config.tar.gz"
-                fi
+                tar -xzf /seed/jellyfin-config.tar.gz -C /config/
+                chmod -R 777 /config
+                mv /seed/jellyfin-config.tar.gz /seed/jellyfin-config.tar.gz.restored
+                echo "Restore completed successfully."
               else
-                echo "Jellyfin config already present in volume, skipping restore."
+                echo "No seed tarball found, proceeding with existing config."
               fi
           volumeMounts:
             - name: config

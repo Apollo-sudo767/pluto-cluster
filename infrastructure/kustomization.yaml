@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - nfs-provisioner
+  # - nfs-provisioner (disabled: sol.local is offline)
   - local-path-provisioner
   # - longhorn (disabled; all storage is currently local-path and nfs-client)
   - cloudflared

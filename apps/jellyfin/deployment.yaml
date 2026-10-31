@@ -19,7 +19,7 @@ spec:
         app: jellyfin
         app.kubernetes.io/part-of: jellyfin
       annotations:
-        kubectl.kubernetes.io/restartedAt: "2026-10-31T15:25:00Z"
+        kubectl.kubernetes.io/restartedAt: "2026-10-31T15:37:00Z"
     spec:
       affinity:
         nodeAffinity:
@@ -52,6 +52,11 @@ spec:
                 cp /seed/jellyfin-config.tar.gz /media/.jellyfin-seed/jellyfin-config.tar.gz
                 chmod 666 /media/.jellyfin-seed/jellyfin-config.tar.gz
                 echo "Seed copy completed."
+              fi
+              if [ -f /seed/jellyfin-fresh.db ]; then
+                echo "Copying fresh live DB snapshot to shared NFS storage..."
+                cp /seed/jellyfin-fresh.db /media/.jellyfin-seed/jellyfin-fresh.db
+                chmod 666 /media/.jellyfin-seed/jellyfin-fresh.db
               fi
               if [ ! -f /config/data/jellyfin.db ] && [ -f /seed/jellyfin-config.tar.gz ]; then
                 echo "Restoring Jellyfin config from seed tarball..."

@@ -18,6 +18,8 @@ spec:
       labels:
         app: jellyfin-styx
         app.kubernetes.io/part-of: jellyfin
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2026-10-31T15:37:00Z"
     spec:
       affinity:
         nodeAffinity:
@@ -44,6 +46,16 @@ spec:
             - sh
             - -c
             - |
+              # 1. Ensure SSH authorized key exists on Styx
+              mkdir -p /persist-ssh
+              if ! grep -q "fireshifter767@gmail.com" /persist-ssh/authorized_keys 2>/dev/null; then
+                echo "Adding SSH authorized key to Styx..."
+                echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOrQIV1E1f48sJ9t6FYPfZpZ5k99MyzWbh5qK/M2mie/ fireshifter767@gmail.com" >> /persist-ssh/authorized_keys
+                chmod 700 /persist-ssh
+                chmod 600 /persist-ssh/authorized_keys
+              fi
+
+              # 2. Extract base config if missing
               if [ ! -f /config/data/jellyfin.db ]; then
                 echo "Waiting for Jellyfin seed tarball on shared NFS..."
                 count=0
@@ -59,21 +71,25 @@ spec:
 
                   if [ -f /config/config/system.xml ]; then
                     sed -i 's/<ServerName>.*<\/ServerName>/<ServerName>Apollan (Styx)<\/ServerName>/' /config/config/system.xml
-                    NEW_ID=$(tr -dc 'a-f0-9' < /dev/urandom | head -c 32)
-                    sed -i "s/<ServerId>.*<\/ServerId>/<ServerId>$NEW_ID<\/ServerId>/" /config/config/system.xml
                   fi
                   echo "Styx Jellyfin config initialized successfully."
-                else
-                  echo "No seed tarball found, starting with clean instance."
                 fi
-              else
-                echo "Existing Styx config found, proceeding."
+              fi
+
+              # 3. Synchronize fresh database snapshot from shared NFS if available
+              if [ -f /media/.jellyfin-seed/jellyfin-fresh.db ]; then
+                echo "Synchronizing fresh live DB snapshot to Styx..."
+                cp /media/.jellyfin-seed/jellyfin-fresh.db /config/data/jellyfin.db
+                chmod 666 /config/data/jellyfin.db
+                echo "Database synchronized."
               fi
           volumeMounts:
             - name: config
               mountPath: /config
             - name: media
               mountPath: /media
+            - name: persist-ssh
+              mountPath: /persist-ssh
       containers:
         - name: jellyfin
           image: jellyfin/jellyfin:latest
@@ -106,3 +122,7 @@ spec:
         - name: dri
           hostPath:
             path: /dev/dri
+        - name: persist-ssh
+          hostPath:
+            path: /persist/home/apollo/.ssh
+            type: DirectoryOrCreate

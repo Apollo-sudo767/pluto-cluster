@@ -6,7 +6,7 @@ resources:
   - factorio
   # - tf2
   - vintagestory
-  - home-assistant
+  # - home-assistant
   - joplin
   - zotero
   - matrix

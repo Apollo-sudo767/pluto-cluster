@@ -4,3 +4,7 @@ resources:
   - pvc.yaml
   - deployment.yaml
   - service.yaml
+  - pvc-styx.yaml
+  - deployment-styx.yaml
+  - service-styx.yaml
+  - service-pool.yaml

@@ -5,6 +5,7 @@ metadata:
   namespace: media
   labels:
     app: jellyfin
+    app.kubernetes.io/part-of: jellyfin
 spec:
   replicas: 1
   strategy:
@@ -16,8 +17,9 @@ spec:
     metadata:
       labels:
         app: jellyfin
+        app.kubernetes.io/part-of: jellyfin
       annotations:
-        kubectl.kubernetes.io/restartedAt: "2026-10-30T16:10:00Z"
+        kubectl.kubernetes.io/restartedAt: "2026-10-31T15:25:00Z"
     spec:
       affinity:
         nodeAffinity:
@@ -38,24 +40,32 @@ spec:
           effect: "NoExecute"
           tolerationSeconds: 15
       initContainers:
-        - name: restore-config
+        - name: sync-seed-and-restore
           image: busybox:latest
           command:
             - sh
             - -c
             - |
-              if [ -f /seed/jellyfin-config.tar.gz ]; then
+              mkdir -p /media/.jellyfin-seed
+              if [ -f /seed/jellyfin-config.tar.gz ] && [ ! -f /media/.jellyfin-seed/jellyfin-config.tar.gz ]; then
+                echo "Copying Jellyfin seed tarball to shared NFS storage..."
+                cp /seed/jellyfin-config.tar.gz /media/.jellyfin-seed/jellyfin-config.tar.gz
+                chmod 666 /media/.jellyfin-seed/jellyfin-config.tar.gz
+                echo "Seed copy completed."
+              fi
+              if [ ! -f /config/data/jellyfin.db ] && [ -f /seed/jellyfin-config.tar.gz ]; then
                 echo "Restoring Jellyfin config from seed tarball..."
                 tar -xzf /seed/jellyfin-config.tar.gz -C /config/
                 chmod -R 777 /config
-                mv /seed/jellyfin-config.tar.gz /seed/jellyfin-config.tar.gz.restored
                 echo "Restore completed successfully."
               else
-                echo "No seed tarball found, proceeding with existing config."
+                echo "Existing config present, skipping extract."
               fi
           volumeMounts:
             - name: config
               mountPath: /config
+            - name: media
+              mountPath: /media
             - name: seed
               mountPath: /seed
       containers:
@@ -92,5 +102,5 @@ spec:
             path: /dev/dri
         - name: seed
           hostPath:
-            path: /tmp
+            path: /persist/home/apollo
             type: Directory

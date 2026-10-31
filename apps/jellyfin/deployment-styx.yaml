@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jellyfin-styx
+  namespace: media
+  labels:
+    app: jellyfin-styx
+    app.kubernetes.io/part-of: jellyfin
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: jellyfin-styx
+  template:
+    metadata:
+      labels:
+        app: jellyfin-styx
+        app.kubernetes.io/part-of: jellyfin
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - styx
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 15
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 15
+      initContainers:
+        - name: restore-config
+          image: busybox:latest
+          command:
+            - sh
+            - -c
+            - |
+              if [ ! -f /config/data/jellyfin.db ]; then
+                echo "Waiting for Jellyfin seed tarball on shared NFS..."
+                count=0
+                while [ ! -f /media/.jellyfin-seed/jellyfin-config.tar.gz ] && [ $count -lt 30 ]; do
+                  sleep 2
+                  count=$((count+1))
+                done
+
+                if [ -f /media/.jellyfin-seed/jellyfin-config.tar.gz ]; then
+                  echo "Extracting seed config to Styx local storage..."
+                  tar -xzf /media/.jellyfin-seed/jellyfin-config.tar.gz -C /config/
+                  chmod -R 777 /config
+
+                  if [ -f /config/config/system.xml ]; then
+                    sed -i 's/<ServerName>.*<\/ServerName>/<ServerName>Apollan (Styx)<\/ServerName>/' /config/config/system.xml
+                    NEW_ID=$(tr -dc 'a-f0-9' < /dev/urandom | head -c 32)
+                    sed -i "s/<ServerId>.*<\/ServerId>/<ServerId>$NEW_ID<\/ServerId>/" /config/config/system.xml
+                  fi
+                  echo "Styx Jellyfin config initialized successfully."
+                else
+                  echo "No seed tarball found, starting with clean instance."
+                fi
+              else
+                echo "Existing Styx config found, proceeding."
+              fi
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: media
+              mountPath: /media
+      containers:
+        - name: jellyfin
+          image: jellyfin/jellyfin:latest
+          ports:
+            - containerPort: 8096
+              name: http
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              cpu: "500m"
+              memory: 2Gi
+            limits:
+              cpu: "4"
+              memory: 8Gi
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: media
+              mountPath: /media
+            - name: dri
+              mountPath: /dev/dri
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: jellyfin-config-styx
+        - name: media
+          persistentVolumeClaim:
+            claimName: media-storage
+        - name: dri
+          hostPath:
+            path: /dev/dri

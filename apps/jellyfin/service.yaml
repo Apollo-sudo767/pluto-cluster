@@ -3,11 +3,17 @@ kind: Service
 metadata:
   name: jellyfin
   namespace: media
+  labels:
+    app: jellyfin
 spec:
   type: ClusterIP
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 86400
   ports:
     - port: 8096
       targetPort: 8096
       name: http
   selector:
-    app: jellyfin
+    app.kubernetes.io/part-of: jellyfin

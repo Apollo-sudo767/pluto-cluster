@@ -7,13 +7,10 @@ metadata:
     app: jellyfin
 spec:
   type: ClusterIP
-  sessionAffinity: ClientIP
-  sessionAffinityConfig:
-    clientIP:
-      timeoutSeconds: 86400
+  sessionAffinity: None
   ports:
     - port: 8096
       targetPort: 8096
       name: http
   selector:
-    app.kubernetes.io/part-of: jellyfin
+    app: jellyfin-lb

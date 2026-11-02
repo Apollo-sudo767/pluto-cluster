@@ -3,6 +3,9 @@ kind: Kustomization
 resources:
   - pvc.yaml
   - deployment.yaml
-  - service.yaml
+  - service-hydra.yaml
   - pvc-styx.yaml
   - deployment-styx.yaml
+  - service-styx.yaml
+  - loadbalancer.yaml
+  - service.yaml

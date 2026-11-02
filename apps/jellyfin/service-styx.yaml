@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jellyfin-styx
+  namespace: media
+  labels:
+    app: jellyfin-styx
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+    - port: 8096
+      targetPort: 8096
+      name: http
+  selector:
+    app: jellyfin-styx

@@ -19,7 +19,7 @@ spec:
         app: jellyfin
         app.kubernetes.io/part-of: jellyfin
       annotations:
-        kubectl.kubernetes.io/restartedAt: "2026-10-31T15:37:00Z"
+        kubectl.kubernetes.io/restartedAt: "2026-11-04T19:42:00Z"
     spec:
       affinity:
         nodeAffinity:

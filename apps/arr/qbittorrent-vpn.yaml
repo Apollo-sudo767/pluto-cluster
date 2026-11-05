@@ -16,6 +16,8 @@ spec:
     metadata:
       labels:
         app: qbittorrent
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2026-11-05T19:15:00Z"
     spec:
       affinity:
         nodeAffinity:
@@ -61,7 +63,7 @@ spec:
             - name: SERVER_COUNTRIES
               value: "Netherlands"
             - name: FIREWALL_INPUT_PORTS
-              value: "8080"
+              value: "8080,6881"
             - name: FIREWALL_OUTBOUND_SUBNETS
               value: "10.42.0.0/16,10.43.0.0/16,192.168.0.0/16,10.0.0.0/8"
             - name: DOT
@@ -71,6 +73,12 @@ spec:
           ports:
             - name: http
               containerPort: 8080
+            - name: bittorrent
+              containerPort: 6881
+              protocol: TCP
+            - name: bittorrent-udp
+              containerPort: 6881
+              protocol: UDP
           resources:
             requests:
               cpu: "100m"

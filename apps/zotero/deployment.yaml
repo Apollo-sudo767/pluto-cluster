@@ -16,6 +16,8 @@ spec:
     metadata:
       labels:
         app: zotero
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2026-11-08T23:01:00Z"
     spec:
       initContainers:
         - name: init-storage

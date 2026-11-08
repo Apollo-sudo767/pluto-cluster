@@ -36,6 +36,10 @@ data:
         password: "{bcrypt}$2b$05$vdB4P/hY/tXngTOBHxuzOun7Mm.dOISAy139getu7z5MWUdofMZru"
         modify: true
         permissions: "CRUD"
+      - username: Stink
+        password: "{bcrypt}$2y$05$Ry3cQ/iLhZFvKtnq80jk6uItSR45UWpeZQp0pExjLwAUd8U4plKmW"
+        modify: true
+        permissions: "CRUD"
 
   nginx.conf: |
     server {

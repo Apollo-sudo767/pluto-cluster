@@ -16,6 +16,8 @@ spec:
     metadata:
       labels:
         app: factorio
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2026-11-17T18:55:00Z"
     spec:
       affinity:
         nodeAffinity:
@@ -38,6 +40,7 @@ spec:
       containers:
         - name: factorio
           image: factoriotools/factorio:stable
+          imagePullPolicy: Always
           ports:
             - containerPort: 34197
               hostPort: 34197

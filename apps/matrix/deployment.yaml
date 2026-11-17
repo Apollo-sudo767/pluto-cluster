@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       annotations:
-        rollout: "v10-auto-failover"
+        rollout: "v11-unas-mountport-39549"
       labels:
         app: matrix
         component: homeserver

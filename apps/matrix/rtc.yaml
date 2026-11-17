@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       annotations:
-        rollout: "v12-auto-failover"
+        rollout: "v13-unas-mountport-39549"
       labels:
         app: matrix-rtc
         component: rtc
